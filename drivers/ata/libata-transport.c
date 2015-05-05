@@ -755,7 +755,6 @@ struct scsi_transport_template *ata_attach_transport(void)
 	SETUP_DEV_ATTRIBUTE(ering);
 	SETUP_DEV_ATTRIBUTE(id);
 	SETUP_DEV_ATTRIBUTE(gscr);
-	SETUP_DEV_ATTRIBUTE(trim);
 	BUG_ON(count > ATA_DEV_ATTRS);
 	i->dev_attrs[count] = NULL;
 
