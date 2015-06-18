@@ -4487,6 +4487,9 @@ nfs4_check_olstateid(struct svc_fh *fhp, struct nfs4_ol_stateid *ols, int flags)
 {
 	__be32 status;
 
+	status = nfs4_check_fh(fhp, ols);
+	if (status)
+		return status;
 	status = nfsd4_check_openowner_confirmed(ols);
 	if (status)
 		return status;
