@@ -749,8 +749,6 @@ static int arizona_runtime_resume(struct device *dev)
 	case WM8997:
 	case WM8998:
 	case WM1814:
-	case WM1831:
-	case CS47L24:
 		ret = arizona_wait_for_boot(arizona);
 		if (ret != 0) {
 			goto err;
@@ -765,6 +763,13 @@ static int arizona_runtime_resume(struct device *dev)
 					"Failed to connect DCVDD: %d\n", ret);
 				goto err;
 			}
+		}
+		break;
+	case WM1831:
+	case CS47L24:
+		ret = arizona_wait_for_boot(arizona);
+		if (ret != 0) {
+			goto err;
 		}
 		break;
 	default:
@@ -842,15 +847,13 @@ static int arizona_runtime_suspend(struct device *dev)
 		case WM8280:
 		case WM8998:
 		case WM1814:
-		case WM1831:
-		case CS47L24:
-		ret = regmap_update_bits(arizona->regmap,
-					 ARIZONA_ISOLATION_CONTROL,
-					 ARIZONA_ISOLATE_DCVDD1,
-					 ARIZONA_ISOLATE_DCVDD1);
-		if (ret != 0) {
-			dev_err(arizona->dev, "Failed to isolate DCVDD: %d\n",
-				ret);
+			ret = regmap_update_bits(arizona->regmap,
+						 ARIZONA_ISOLATION_CONTROL,
+						 ARIZONA_ISOLATE_DCVDD1,
+						 ARIZONA_ISOLATE_DCVDD1);
+			if (ret != 0) {
+				dev_err(arizona->dev, "Failed to isolate DCVDD: %d\n",
+					ret);
 				goto err;
 			}
 			break;
