@@ -2525,6 +2525,7 @@ static unsigned int ata_scsiop_read_cap(struct ata_scsi_args *args, u8 *rbuf)
 			}
 		}
 	}
+
 	return 0;
 }
 
