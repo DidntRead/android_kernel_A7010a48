@@ -56,8 +56,7 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
 	f2fs_put_dnode(&dn);
 	f2fs_unlock_op(sbi);
 
-	if (dn.node_changed)
-		f2fs_balance_fs(sbi);
+	f2fs_balance_fs(sbi, dn.node_changed);
 
 	file_update_time(vma->vm_file);
 	lock_page(page);
@@ -678,7 +677,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
 			err = f2fs_truncate(inode, true);
 			if (err)
 				return err;
-			f2fs_balance_fs(F2FS_I_SB(inode));
+			f2fs_balance_fs(F2FS_I_SB(inode), true);
 		} else {
 			/*
 			 * do not trim all blocks after i_size if target size is
@@ -734,7 +733,7 @@ static int fill_zero(struct inode *inode, pgoff_t index,
 	if (!len)
 		return 0;
 
-	f2fs_balance_fs(sbi);
+	f2fs_balance_fs(sbi, true);
 
 	f2fs_lock_op(sbi);
 	page = get_new_data_page(inode, NULL, index, false);
@@ -820,7 +819,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
 			loff_t blk_start, blk_end;
 			struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 
-			f2fs_balance_fs(sbi);
+			f2fs_balance_fs(sbi, true);
 
 			blk_start = (loff_t)pg_start << PAGE_CACHE_SHIFT;
 			blk_end = (loff_t)pg_end << PAGE_CACHE_SHIFT;
@@ -923,7 +922,7 @@ static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
 	int ret = 0;
 
 	for (; end < nrpages; start++, end++) {
-		f2fs_balance_fs(sbi);
+		f2fs_balance_fs(sbi, true);
 		f2fs_lock_op(sbi);
 		ret = __exchange_data_block(inode, end, start, true);
 		f2fs_unlock_op(sbi);
@@ -1105,7 +1104,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
 	if (ret)
 		return ret;
 
-	f2fs_balance_fs(sbi);
+	f2fs_balance_fs(sbi, true);
 
 	ret = truncate_blocks(inode, i_size_read(inode), true);
 	if (ret)
@@ -1157,7 +1156,7 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
 	if (ret)
 		return ret;
 
-	f2fs_balance_fs(sbi);
+	f2fs_balance_fs(sbi, true);
 
 	pg_start = ((unsigned long long) offset) >> PAGE_CACHE_SHIFT;
 	pg_end = ((unsigned long long) offset + len) >> PAGE_CACHE_SHIFT;
@@ -1657,7 +1656,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
 	pg_start = range->start >> PAGE_CACHE_SHIFT;
 	pg_end = (range->start + range->len) >> PAGE_CACHE_SHIFT;
 
-	f2fs_balance_fs(sbi);
+	f2fs_balance_fs(sbi, true);
 
 	mutex_lock(&inode->i_mutex);
 
