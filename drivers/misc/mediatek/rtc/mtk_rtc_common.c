@@ -286,6 +286,8 @@ void rtc_gpio_enable_32k(rtc_gpio_user_t user)
 {
 	unsigned long flags;
 
+	rtc_xinfo("rtc_gpio_enable_32k, user = %d\n", user);
+
 	if (user < RTC_GPIO_USER_WIFI || user > RTC_GPIO_USER_PMIC)
 		return;
 
@@ -298,6 +300,8 @@ EXPORT_SYMBOL(rtc_gpio_enable_32k);
 void rtc_gpio_disable_32k(rtc_gpio_user_t user)
 {
 	unsigned long flags;
+
+	rtc_xinfo("rtc_gpio_disable_32k, user = %d\n", user);
 
 	if (user < RTC_GPIO_USER_WIFI || user > RTC_GPIO_USER_PMIC)
 		return;
