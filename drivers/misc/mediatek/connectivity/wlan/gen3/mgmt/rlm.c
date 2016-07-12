@@ -850,7 +850,7 @@ static VOID rlmFillHtCapIE(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo, P_MSDU
 	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxShortGI))
 		prHtCap->u2HtCapInfo |= (HT_CAP_INFO_SHORT_GI_20M | HT_CAP_INFO_SHORT_GI_40M);
 
-	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxLdpc) && (wlanGetEcoVersion(prAdapter) > 2))
+	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxLdpc))
 		prHtCap->u2HtCapInfo |= HT_CAP_INFO_LDPC_CAP;
 
 	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxStbc))
@@ -1178,13 +1178,13 @@ static VOID rlmFillVhtCapIE(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo, P_MSD
 	prVhtCap->ucLength = sizeof(IE_VHT_CAP_T) - ELEM_HDR_LEN;
 	prVhtCap->u4VhtCapInfo = VHT_CAP_INFO_DEFAULT_VAL;
 
-	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucStaVhtBfee) && (wlanGetEcoVersion(prAdapter) > 2))
+	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucStaVhtBfee))
 		prVhtCap->u4VhtCapInfo |= FIELD_VHT_CAP_INFO_BF;
 
 	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxShortGI))
 		prVhtCap->u4VhtCapInfo |= VHT_CAP_INFO_SHORT_GI_80;
 
-	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxLdpc) && (wlanGetEcoVersion(prAdapter) > 2))
+	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxLdpc))
 		prVhtCap->u4VhtCapInfo |= VHT_CAP_INFO_RX_LDPC;
 
 	if (IS_FEATURE_ENABLED(prAdapter->rWifiVar.ucRxStbc))
@@ -1348,8 +1348,7 @@ static UINT_8 rlmRecIeInfoForClient(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInf
 			/* Set LDPC Tx capability */
 			if (IS_FEATURE_FORCE_ENABLED(prWifiVar->ucTxLdpc))
 				prStaRec->u2HtCapInfo |= HT_CAP_INFO_LDPC_CAP;
-			else if (IS_FEATURE_DISABLED(prWifiVar->ucTxLdpc)
-				   || (wlanGetEcoVersion(prAdapter) <= 2))
+			else if (IS_FEATURE_DISABLED(prWifiVar->ucTxLdpc))
 				prStaRec->u2HtCapInfo &= ~HT_CAP_INFO_LDPC_CAP;
 
 			/* Set STBC Tx capability */
@@ -1426,8 +1425,7 @@ static UINT_8 rlmRecIeInfoForClient(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInf
 			/* Set Tx LDPC capability */
 			if (IS_FEATURE_FORCE_ENABLED(prWifiVar->ucTxLdpc))
 				prStaRec->u4VhtCapInfo |= VHT_CAP_INFO_RX_LDPC;
-			else if (IS_FEATURE_DISABLED(prWifiVar->ucTxLdpc)
-				   || (wlanGetEcoVersion(prAdapter) <= 2))
+			else if (IS_FEATURE_DISABLED(prWifiVar->ucTxLdpc))
 				prStaRec->u4VhtCapInfo &= ~VHT_CAP_INFO_RX_LDPC;
 
 			/* Set Tx STBC capability */
@@ -2184,8 +2182,7 @@ VOID rlmProcessAssocReq(P_ADAPTER_T prAdapter, P_SW_RFB_T prSwRfb, PUINT_8 pucIE
 			/* Set Short LDPC Tx capability */
 			if (IS_FEATURE_FORCE_ENABLED(prAdapter->rWifiVar.ucTxLdpc))
 				prStaRec->u2HtCapInfo |= HT_CAP_INFO_LDPC_CAP;
-			else if (IS_FEATURE_DISABLED(prAdapter->rWifiVar.ucTxLdpc)
-				   || (wlanGetEcoVersion(prAdapter) <= 2))
+			else if (IS_FEATURE_DISABLED(prAdapter->rWifiVar.ucTxLdpc))
 				prStaRec->u2HtCapInfo &= ~HT_CAP_INFO_LDPC_CAP;
 
 			/* Set STBC Tx capability */
@@ -2226,8 +2223,7 @@ VOID rlmProcessAssocReq(P_ADAPTER_T prAdapter, P_SW_RFB_T prSwRfb, PUINT_8 pucIE
 			/* Set Tx LDPC capability */
 			if (IS_FEATURE_FORCE_ENABLED(prAdapter->rWifiVar.ucTxLdpc))
 				prStaRec->u4VhtCapInfo |= VHT_CAP_INFO_RX_LDPC;
-			else if (IS_FEATURE_DISABLED(prAdapter->rWifiVar.ucTxLdpc)
-				   || (wlanGetEcoVersion(prAdapter) <= 2))
+			else if (IS_FEATURE_DISABLED(prAdapter->rWifiVar.ucTxLdpc))
 				prStaRec->u4VhtCapInfo &= ~VHT_CAP_INFO_RX_LDPC;
 
 			/* Set Tx STBC capability */
