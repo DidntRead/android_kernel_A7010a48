@@ -198,6 +198,15 @@ config CUSTOM_KERNEL_SIGNIFICANT_MOTION_SENSOR
 	  Kernel space sigificant motion sensor driver.
 #Lenovo-sw weimh1 add 2016-3-2 end:add step_counter config
 
+config MTK_CACHE_FLUSH_RANGE_PARALLEL
+	bool "Enable cache flush by range in parallel"
+	depends on MTK_IRQ_NEW_DESIGN
+	help
+	  This mediatek feature is to accelerate the cache flush by range operation
+	  with parallel flushing support. Cache flush module issues smp_function_call
+	  to all the online CPUs except the one has largest affinity value, which
+	  services IRQs rather than participating cache flushing procesure.
+
 source "drivers/misc/mediatek/gpt/Kconfig"
 source "drivers/misc/mediatek/uart/Kconfig"
 source "drivers/misc/mediatek/irtx/Kconfig"
