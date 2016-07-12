@@ -715,6 +715,11 @@ static struct battery_data battery_main = {
 #endif
 };
 
+void mt_battery_set_init_vol(int init_voltage)
+{
+	BMT_status.bat_vol = init_voltage;
+	battery_main.BAT_batt_vol = init_voltage;
+}
 
 #if !defined(CONFIG_POWER_EXT)
 /* ///////////////////////////////////////////////////////////////////////////////////////// */
