@@ -1013,6 +1013,8 @@ typedef struct _MONITOR_RADIOTAP_T {
 	else { \
 		pvAddr = vmalloc(u4Size);   \
 	} \
+	if (!pvAddr) \
+		ASSERT_NOMEM(); \
 	pvAddr; \
 })
 #endif
