@@ -822,7 +822,7 @@ typedef struct {
 #ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
     void (*set_cabcmode)(unsigned int mode);
     void (*get_cabcmode)(unsigned int * mode);
-    void (*set_inversemode)(unsigned int mode);
+    void (*set_inversemode)(bool enable);
     void (*get_inversemode)(unsigned int * mode);
 
     void (*set_lcm_reg)(lcm_reg *regs);
