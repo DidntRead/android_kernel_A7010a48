@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  */
-#define DEBUG 1
+#define DEBUG 0
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <asm/cacheflush.h>
@@ -70,9 +70,9 @@ static struct workqueue_struct *binder_deferred_workqueue;
 #ifdef RT_PRIO_INHERIT
 #include <linux/sched/rt.h>
 #endif
-
+#if 0
 #define MTK_BINDER_DEBUG        "v0.1"	/* defined for mtk internal added debug code */
-
+#endif
 /*****************************************************************************************************/
 /*	MTK Death Notify	|                                               */
 /*	Debug Log Prefix	|	Description                                 */
@@ -93,7 +93,7 @@ static struct workqueue_struct *binder_deferred_workqueue;
  * v0.2   - transaction timeout log
  * v0.2.1 - buffer allocation debug
  */
-#ifdef CONFIG_MT_ENG_BUILD
+#if 0
 #define BINDER_MONITOR			"v0.2.1"	/* BINDER_MONITOR only turn on for eng build */
 #endif
 
@@ -2710,7 +2710,9 @@ static void binder_transaction(struct binder_proc *proc,
 					fp->type = BINDER_TYPE_HANDLE;
 				else
 					fp->type = BINDER_TYPE_WEAK_HANDLE;
+				fp->binder = 0;
 				fp->handle = ref->desc;
+				fp->cookie = 0;
 				binder_inc_ref(ref, fp->type == BINDER_TYPE_HANDLE, &thread->todo);
 
 				trace_binder_transaction_node_to_ref(t, node, ref);
@@ -2765,7 +2767,9 @@ static void binder_transaction(struct binder_proc *proc,
 						return_error = BR_FAILED_REPLY;
 						goto err_binder_get_ref_for_node_failed;
 					}
+					fp->binder = 0;
 					fp->handle = new_ref->desc;
+					fp->cookie = 0;
 					binder_inc_ref(new_ref,
 						       fp->type == BINDER_TYPE_HANDLE, NULL);
 					trace_binder_transaction_ref_to_ref(t, ref, new_ref);
@@ -2832,6 +2836,7 @@ static void binder_transaction(struct binder_proc *proc,
 				binder_debug(BINDER_DEBUG_TRANSACTION,
 					     "        fd %d -> %d\n", fp->handle, target_fd);
 				/* TODO: fput? */
+				fp->binder = 0;
 				fp->handle = target_fd;
 #ifdef BINDER_MONITOR
 				e->fd = target_fd;
