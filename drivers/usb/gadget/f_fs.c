@@ -2608,7 +2608,6 @@ static int ffs_func_revmap_intf(struct ffs_function *func, u8 intf)
 	return -EDOM;
 }
 
-
 /* Misc helper functions ****************************************************/
 
 static int ffs_mutex_lock(struct mutex *mutex, unsigned nonblock)
