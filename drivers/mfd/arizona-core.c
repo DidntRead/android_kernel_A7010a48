@@ -2278,6 +2278,9 @@ int arizona_dev_init(struct arizona *arizona)
 	if (ret != 0)
 		goto err_reset;
 
+	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
+	pm_runtime_use_autosuspend(arizona->dev);
+
 	arizona_request_irq(arizona, ARIZONA_IRQ_CLKGEN_ERR, "CLKGEN error",
 			    arizona_clkgen_err, arizona);
 	arizona_request_irq(arizona, ARIZONA_IRQ_OVERCLOCKED, "Overclocked",
@@ -2329,7 +2332,6 @@ int arizona_dev_init(struct arizona *arizona)
 		dev_err(arizona->dev, "Failed to add subdevices: %d\n", ret);
 		goto err_irq;
 	}
-
 
 	return 0;
 
