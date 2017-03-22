@@ -44,6 +44,10 @@
 #endif
 //end
 
+#ifdef CONFIG_THUNDERCHARGE_CONTROL
+#include "thundercharge_control.h"
+#endif
+
 #if defined(CONFIG_MTK_PUMP_EXPRESS_PLUS_SUPPORT)
 #include <linux/mutex.h>
 #include <linux/wakelock.h>
@@ -1114,6 +1118,16 @@ void select_charging_current(void)
 #ifdef CONFIG_USB_IF
 			{
 				g_temp_input_CC_value = CHARGE_CURRENT_MAX;
+				#ifdef CONFIG_THUNDERCHARGE_CONTROL				
+				if (g_usb_state == USB_SUSPEND)
+					g_temp_CC_value = USB_CHARGER_CURRENT_SUSPEND;
+				else if (g_usb_state == USB_UNCONFIGURED)
+					g_temp_CC_value = batt_cust_data.usb_charger_current_unconfigured;
+				else if (g_usb_state == USB_CONFIGURED)
+					g_temp_CC_value = custom_usb_current;
+				else
+					g_temp_CC_value = batt_cust_data.usb_charger_current_unconfigured;
+				#else 
 				if (g_usb_state == USB_SUSPEND)
 					g_temp_CC_value = USB_CHARGER_CURRENT_SUSPEND;
 				else if (g_usb_state == USB_UNCONFIGURED)
@@ -1122,6 +1136,7 @@ void select_charging_current(void)
 					g_temp_CC_value = batt_cust_data.usb_charger_current_configured;
 				else
 					g_temp_CC_value = batt_cust_data.usb_charger_current_unconfigured;
+				#endif
 
 				battery_log(BAT_LOG_CRTI,
 					    "[BATTERY] STANDARD_HOST CC mode charging : %d on %d state\r\n",
@@ -1129,8 +1144,13 @@ void select_charging_current(void)
 			}
 #else
 			{
+				#ifdef CONFIG_THUNDERCHARGE_CONTROL
+				g_temp_input_CC_value = custom_usb_current;
+				g_temp_CC_value = custom_usb_current;
+				#else
 				g_temp_input_CC_value = batt_cust_data.usb_charger_current;
 				g_temp_CC_value = batt_cust_data.usb_charger_current;
+				#endif
 			}
 #endif
 		} else if (BMT_status.charger_type == NONSTANDARD_CHARGER) {

@@ -12,6 +12,14 @@ config MTK_SMART_BATTERY
 	  It also includes Mediatek gas gauge.
 	default n
 
+config THUNDERCHARGE_CONTROL
+     bool "Enable ThunderCharge Current Controlling mechanism"
+     depends on MTK_SMART_BATTERY
+     help
+       Say Y here to enable ability to adjust charger current
+
+
+
 config POWER_EXT
 	tristate "MediaTek Power Ext"
 	help
