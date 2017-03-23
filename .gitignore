@@ -96,3 +96,8 @@ x509.genkey
 
 # Kconfig presets
 all.config
+
+# Merge
+arch/sh/boot/compressed/vmlinux.scr
+arch/sh/boot/romimage/vmlinux.scr
+Documentation/DocBook/media/v4l/*
