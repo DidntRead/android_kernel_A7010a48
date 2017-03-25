@@ -2243,6 +2243,7 @@ static struct platform_device mtk_disp_mgr_device = {
 
 #ifdef CONFIG_MTK_VIDEOX_CYNGN_LIVEDISPLAY
 #define MAX_LUT_SCALE 2000
+static u32 MIN_LUT_SCALE = 1; // Set minimum to 1 so people cant make their screen black
 #define PROGRESSION_SCALE 1000
 static u32 mtk_disp_ld_r = MAX_LUT_SCALE;
 static u32 mtk_disp_ld_g = MAX_LUT_SCALE;
@@ -2252,6 +2253,21 @@ static ssize_t mtk_disp_ld_get_rgb(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	return scnprintf(buf, PAGE_SIZE, "%d %d %d\n", mtk_disp_ld_r, mtk_disp_ld_g, mtk_disp_ld_b);
+}
+
+static ssize_t mtk_disp_ld_get_min_rgb(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", MIN_LUT_SCALE);
+}
+
+static ssize_t mtk_disp_ld_set_min_rgb(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	unsigned int val;
+	sscanf(buf, "%u", &val);
+	MIN_LUT_SCALE = val;
+	return count;
 }
 
 /**
@@ -2279,6 +2295,10 @@ static ssize_t mtk_disp_ld_set_rgb(struct device *dev,
 	if (g < 0 || g > MAX_LUT_SCALE) return -EINVAL;
 	if (b < 0 || b > MAX_LUT_SCALE) return -EINVAL;
 
+	if (r < MIN_LUT_SCALE) r = MIN_LUT_SCALE;
+	if (g < MIN_LUT_SCALE) g = MIN_LUT_SCALE;
+	if (b < MIN_LUT_SCALE) b = MIN_LUT_SCALE;
+
 	cancel_work_sync(&mtk_rgb_work_queue.work);
 	mtk_disp_ld_r = r;
 	mtk_disp_ld_g = g;
@@ -2289,6 +2309,7 @@ static ssize_t mtk_disp_ld_set_rgb(struct device *dev,
 }
 
 static DEVICE_ATTR(rgb, S_IRUGO | S_IWUSR | S_IWGRP, mtk_disp_ld_get_rgb, mtk_disp_ld_set_rgb);
+static DEVICE_ATTR(min_rgb, S_IRUGO | S_IWUSR | S_IWGRP, mtk_disp_ld_get_min_rgb, mtk_disp_ld_set_min_rgb);
 
 static void mtk_disp_rgb_work(struct work_struct *work) {
         struct mtk_rgb_work_queue *rgb_wq = container_of(work, struct mtk_rgb_work_queue, work);
@@ -2327,6 +2348,7 @@ static int __init mtk_disp_mgr_init(void)
 	}
 
 	#ifdef CONFIG_MTK_VIDEOX_CYNGN_LIVEDISPLAY
+	rc = sysfs_create_file(&(mtk_disp_mgr_device.dev.kobj), &dev_attr_min_rgb.attr);
 	rc = sysfs_create_file(&(mtk_disp_mgr_device.dev.kobj), &dev_attr_rgb.attr);
 	mutex_init(&mtk_rgb_work_queue.lock);
 	INIT_WORK(&mtk_rgb_work_queue.work, mtk_disp_rgb_work);
@@ -2340,6 +2362,7 @@ static void __exit mtk_disp_mgr_exit(void)
 	#ifdef CONFIG_MTK_VIDEOX_CYNGN_LIVEDISPLAY
 	mutex_destroy(&mtk_rgb_work_queue.lock);
 	sysfs_remove_file(&(mtk_disp_mgr_device.dev.kobj), &dev_attr_rgb.attr);
+	sysfs_remove_file(&(mtk_disp_mgr_device.dev.kobj), &dev_attr_min_rgb.attr);
 #endif
 	cdev_del(mtk_disp_mgr_cdev);
 	unregister_chrdev_region(mtk_disp_mgr_devno, 1);
