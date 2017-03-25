@@ -61,10 +61,32 @@ static ssize_t thunderquake_version_show(struct kobject *kobj, struct kobj_attri
 	return sprintf(buf, "version: %u.%u\n", ENGINE_VERSION, ENGINE_VERSION_SUB);
 }
 
+static ssize_t min_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", MIN_VIBR);
+}
+
+static ssize_t max_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", MAX_VIBR);
+}
+
 static struct kobj_attribute thunderquake_version_attribute =
 	__ATTR(engine_version,
 		0444,
 		thunderquake_version_show, NULL);
+
+static struct kobj_attribute thunderquake_min_attribute =
+	__ATTR(min,
+		0444,
+		min_show, NULL);
+
+
+static struct kobj_attribute thunderquake_max_attribute =
+	__ATTR(max,
+		0444,
+		max_show, NULL);
+
 
 static struct kobj_attribute thunderquake_level_attribute =
 	__ATTR(level,
@@ -75,6 +97,8 @@ static struct attribute *thunderquake_engine_attrs[] =
 	{
 		&thunderquake_level_attribute.attr,
 		&thunderquake_version_attribute.attr,
+		&thunderquake_max_attribute.attr,
+		&thunderquake_min_attribute.attr,
 		NULL,
 	};
 
