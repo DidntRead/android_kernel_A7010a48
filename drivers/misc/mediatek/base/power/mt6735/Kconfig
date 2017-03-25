@@ -6,3 +6,12 @@ config CPU_DVFS_SYSTEM_BOOTUP_BOOST
 		CPU_DVFS_SYSTEM_BOOTUP_BOOST is used to enhance system bootup time by fixing
 		CPU at max CPU frequency before bootup procedure finished. Say y here to enable
 		it and say n to disable it.
+
+config MTK_VOLTAGE_TABLE
+	tristate "Enable CPU Voltage Table via sysfs for adjustements"
+	depends on CPU_FREQ
+	default n
+	help
+	  This drivers lets the user change the dvfs voltage table for the cpu
+	  If in doubt, say N.
+
