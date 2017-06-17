@@ -2,7 +2,7 @@ language: c
 before_install:
   sudo apt-get update -qq
 install:
-    wget http://bit.ly/2rGoeBa --max-redirect=2 -O /tmp/toolchain.tar.xz
+    wget --max-redirect=2 -O /tmp/toolchain.tar.xz http://bit.ly/2rGoeBa
     tar -xvf /tmp/toolchain.tar.xz
     export CROSS_COMPILE=/tmp/aarch64-linux-android-4.9/bin
 script:
