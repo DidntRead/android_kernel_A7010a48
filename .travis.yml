@@ -1,9 +1,10 @@
+language: c
 before_install:
-- sudo apt-get update -qq
+  sudo apt-get update -qq
 install:
-  - wget https://basketbuild.com/uploads/devs/Cl3Kener/TOOLCHAIN/aarch64-linux-android-4.9.tar.xz -O /tmp/toolchain.tar.xz
-  - tar -xvf /tmp/toolchain.tar.xz
-  - export CROSS_COMPILE=/tmp/aarch64-linux-android-4.9/bin
-  script:
-  -make k5fpr_defconfig
-  -make
+    wget http://bit.ly/2rGoeBa --max-redirect=2 -O /tmp/toolchain.tar.xz
+    tar -xvf /tmp/toolchain.tar.xz
+    export CROSS_COMPILE=/tmp/aarch64-linux-android-4.9/bin
+script:
+    -make k5fpr_defconfig
+    -make
