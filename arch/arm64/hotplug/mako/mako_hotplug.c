@@ -34,7 +34,7 @@
 #define DEFAULT_LOAD_THRESHOLD 80
 #define DEFAULT_HIGH_LOAD_COUNTER 10
 #define DEFAULT_MAX_LOAD_COUNTER 20
-#define DEFAULT_CPUFREQ_UNPLUG_LIMIT 1800000
+#define DEFAULT_CPUFREQ_UNPLUG_LIMIT 1300000
 #define DEFAULT_MIN_TIME_CPU_ONLINE 1
 #define DEFAULT_TIMER 1
 
@@ -99,7 +99,7 @@ struct hotplug_tunables {
 static struct workqueue_struct *wq;
 static struct delayed_work decide_hotplug;
 
-extern unsigned int hps_cpu_get_percpu_load(int cpu);
+extern unsigned int sched_get_percpu_load(int cpu, bool reset, bool use_maxfreq);
 
 static inline void cpus_online_work(void)
 {
@@ -235,7 +235,7 @@ static void __ref decide_hotplug_func(struct work_struct *work)
 	}
 
 	for (cpu = 0; cpu < 2; cpu++)
-		cur_load += hps_cpu_get_percpu_load(cpu);
+		cur_load += sched_get_percpu_load(cpu, 0, 1);
 
 	cur_load >>= 1;
 
