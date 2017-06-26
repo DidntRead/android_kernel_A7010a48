@@ -1,0 +1,21 @@
+language: C
+dist: trusty
+before_install:
+- git clone https://bitbucket.org/UBERTC/aarch64-linux-android-5.3-kernel.git toolchain
+- export CROSS_COMPILE=$PWD/toolchain/bin/aarch64-linux-android-
+- sudo apt-get -qq update
+- sudo apt-get install -y build-essential kernel-package libncurses5-dev bzip2
+- chmod +x build.sh
+- chmod +x $PWD/tools/dct/DrvGen.py
+install: true
+script:
+- "./build.sh"
+deploy:
+  provider: releases
+  api_key:
+    secure: ZXgCkwV1cxpDv/JdeEI9j32U0/7QCu86bZqT2LYyB3FaNqytm7CkTPn0yunURANMUZU5zp3/f/Z8koyny7+nCaFzAHC9Sb1Rf+wbb7KcR0/yQEFJ7lIhngfJq9KFGdYs3BLZBDsXDE4YCVoM4IuHKtrTRREkB6yA4KHeU3owZZWYPbt4YTgN7uYL0STJxGpgH4D+KnMb51tO8YzzA+ysGyoqDXMRZPb3oGQv82P+M9dkLJtzC0dzuflR3nnrF8jNqU/nRH3yUf/x5cawRWagjMCFyxv8UMSSOYJe7sTsS1WhknYhQUZ48Buv3h498v3ffX3TyJn61klv2KozqTPs6BtKWaxXkZxVHR6wyPgxqaFqzAzVpsj5j388U37PNdx35eWQFAeot0/jdJBv9ylIfysXuOBbqnxwTDNW/xoHpRxsq6yeIVi51+3lk63ikMbwtN0ore270vkxMb7PS4XtcBb9dNcTr05DSg8IBkRjlg3HfoWafYRKRHsFgeNQ8kVe5nwHuzEbwV+1b2k5anfCfNPD+DhZi5FOAVOliyaUqQnr+9UJhb5kqkcBv/OHr5yDVTd50QQx9VJ496TmsBsuVNlfe4R86qu4EKlG0FmItvJq6wmg25tUAdzvGsMft+czrY+ZMlrQlzr8Y5jmLNvGb8wgoY/aWjgMgaHlFDrT5Mc=
+  file: "$PWD/out/arch/arm64/boot/zImage-dtb"
+  skip_cleanup: true
+  on:
+    repo: DidntRead/android_kernel_A7010a48
+    branch: latest
