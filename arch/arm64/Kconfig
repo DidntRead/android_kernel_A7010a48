@@ -975,3 +975,11 @@ source "arch/arm64/crypto/Kconfig"
 endif
 
 source "lib/Kconfig"
+
+source "arch/arm64/hotplug/alucard/Kconfig"
+
+source "arch/arm64/hotplug/thunderplug/Kconfig"
+
+source "arch/arm64/hotplug/autosmp/Kconfig"
+
+source "arch/arm64/hotplug/mako/Kconfig"

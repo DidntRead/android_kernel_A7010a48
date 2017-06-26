@@ -46,6 +46,10 @@ core-y		+= arch/arm64/kernel/ arch/arm64/mm/
 core-$(CONFIG_NET) += arch/arm64/net/
 core-$(CONFIG_KVM) += arch/arm64/kvm/
 core-$(CONFIG_XEN) += arch/arm64/xen/
+core-$(CONFIG_ALUCARD_HOTPLUG)	+= arch/arm64/hotplug/alucard/
+core-$(CONFIG_THUNDERPLUG_CONTROL)	+= arch/arm64/hotplug/thunderplug/
+core-$(CONFIG_MAKO_HOTPLUG)	+= arch/arm64/hotplug/mako/
+core-$(CONFIG_ASMP)	+= arch/arm64/hotplug/autosmp/
 core-$(CONFIG_CRYPTO) += arch/arm64/crypto/
 # lenovo-sw zhouwl, for wm8281 begin
 core-y		+=arch/arm64/mach-mtk/
