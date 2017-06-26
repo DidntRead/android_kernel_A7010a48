@@ -23,9 +23,10 @@
 #include <linux/kernel.h>
 #include <linux/kallsyms.h>
 
-#include <cust_vibrator.h>
-#include <vibrator_hal.h>
+#include "mt6735/vibrator.h"
+#include "mt6735/vibrator_hal.h"
 #include <mach/upmu_hw.h>
+#include <mt-plat/upmu_common.h>
 
 #define MAX_VIBR 7
 #define MIN_VIBR 0
@@ -33,7 +34,7 @@
 #define ENGINE_VERSION  1
 #define ENGINE_VERSION_SUB 0
 
-extern void pmic_set_register_value(PMU_FLAGS_LIST_ENUM flagname, kal_uint32 val);
+extern unsigned short pmic_set_register_value(PMU_FLAGS_LIST_ENUM flagname, uint32_t val);
 
 static ssize_t vibr_vtg_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
@@ -67,7 +68,7 @@ static struct kobj_attribute thunderquake_version_attribute =
 
 static struct kobj_attribute thunderquake_level_attribute =
 	__ATTR(level,
-		0666,
+		0664,
 		vibr_vtg_show, vibr_vtg_store);
 
 static struct attribute *thunderquake_engine_attrs[] =
