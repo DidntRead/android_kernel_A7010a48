@@ -99,6 +99,8 @@ struct hotplug_tunables {
 static struct workqueue_struct *wq;
 static struct delayed_work decide_hotplug;
 
+extern unsigned int hps_cpu_get_percpu_load(int cpu);
+
 static inline void cpus_online_work(void)
 {
 	unsigned int cpu;
@@ -233,7 +235,7 @@ static void __ref decide_hotplug_func(struct work_struct *work)
 	}
 
 	for (cpu = 0; cpu < 2; cpu++)
-		cur_load += cpufreq_quick_get_util(cpu);
+		cur_load += hps_cpu_get_percpu_load(cpu);
 
 	cur_load >>= 1;
 

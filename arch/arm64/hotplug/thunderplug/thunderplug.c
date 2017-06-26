@@ -19,7 +19,6 @@
 #include <linux/input.h>
 #include <linux/slab.h>
 #include <linux/cpu.h>
-#include <linux/lcd_notify.h>
 #include <linux/cpufreq.h>
 
 static int suspend_cpu_num = 2, resume_cpu_num = 7;
@@ -28,8 +27,6 @@ static int device_cpus = 8;
 static int core_limit = 8;
 
 static bool isSuspended = false;
-
-struct notifier_block lcd_worker;
 
 #define DEBUG 0
 
@@ -437,35 +434,6 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 
 }
 
-static int lcd_notifier_callback(struct notifier_block *nb,
-                                 unsigned long event, void *data)
-{
-       switch (event) {
-       case LCD_EVENT_ON_START:
-			isSuspended = false;
-			if(tplug_hp_enabled)
-				queue_delayed_work_on(0, tplug_wq, &tplug_work,
-								msecs_to_jiffies(sampling_time));
-			else
-				queue_delayed_work_on(0, tplug_resume_wq, &tplug_resume_work,
-		                      msecs_to_jiffies(10));
-			pr_info("thunderplug : resume called\n");
-               break;
-       case LCD_EVENT_ON_END:
-               break;
-       case LCD_EVENT_OFF_START:
-               break;
-       case LCD_EVENT_OFF_END:
-			isSuspended = true;
-			pr_info("thunderplug : suspend called\n");
-               break;
-       default:
-               break;
-       }
-
-       return 0;
-}
-
 static ssize_t thunderplug_ver_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
        return sprintf(buf, "ThunderPlug %u.%u", DRIVER_VERSION, DRIVER_SUBVER);
@@ -478,32 +446,32 @@ static struct kobj_attribute thunderplug_ver_attribute =
 
 static struct kobj_attribute thunderplug_suspend_cpus_attribute =
        __ATTR(suspend_cpus,
-               0666,
+               0664,
                thunderplug_suspend_cpus_show, thunderplug_suspend_cpus_store);
 
 static struct kobj_attribute thunderplug_endurance_attribute =
        __ATTR(endurance_level,
-               0666,
+               0664,
                thunderplug_endurance_show, thunderplug_endurance_store);
 
 static struct kobj_attribute thunderplug_sampling_attribute =
        __ATTR(sampling_rate,
-               0666,
+               0664,
                thunderplug_sampling_show, thunderplug_sampling_store);
 
 static struct kobj_attribute thunderplug_load_attribute =
        __ATTR(load_threshold,
-               0666,
+               0664,
                thunderplug_load_show, thunderplug_load_store);
 
 static struct kobj_attribute thunderplug_hp_enabled_attribute =
        __ATTR(hotplug_enabled,
-               0666,
+               0664,
                thunderplug_hp_enabled_show, thunderplug_hp_enabled_store);
 
 static struct kobj_attribute thunderplug_tb_enabled_attribute =
        __ATTR(touch_boost,
-               0666,
+               0664,
                thunderplug_tb_enabled_show, thunderplug_tb_enabled_store);
 
 static struct attribute *thunderplug_attrs[] =
@@ -546,10 +514,7 @@ static int __init thunderplug_init(void)
                 kobject_put(thunderplug_kobj);
         }
 
-		lcd_worker.notifier_call = lcd_notifier_callback;
-
         
-
 		pr_info("%s : registering input boost", THUNDERPLUG);
 		ret = input_register_handler(&tplug_input_handler);
 		if (ret) {
