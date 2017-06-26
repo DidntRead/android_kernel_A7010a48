@@ -1544,7 +1544,7 @@ s32 mt_set_pwm_valid ( u32 pwm_no, u32 buf_valid_bit )   //set 0  for BUF0 bit o
 		return -EEXCESSPWMNO;
 	}
 
-	if ( !buf_valid_bit>= BUF_EN_MAX) {
+	if ( !(buf_valid_bit >= BUF_EN_MAX)) {
 		printk ( "inavlid bit \n" );
 		return -EPARMNOSUPPORT;
 	}
