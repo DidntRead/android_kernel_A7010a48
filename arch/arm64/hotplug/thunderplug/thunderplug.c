@@ -26,7 +26,7 @@ static int endurance_level = 0;
 static int device_cpus = 8;
 static int core_limit = 8;
 
-static bool isSuspended = false;
+extern int primary_display_is_sleepd(void);
 
 #define DEBUG 0
 
@@ -422,11 +422,11 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 		}
 	}
 
-	if(tplug_hp_enabled != 0 && !isSuspended)
+	if(tplug_hp_enabled != 0 && !primary_display_is_sleepd())
 		queue_delayed_work_on(0, tplug_wq, &tplug_work,
 			msecs_to_jiffies(sampling_time));
 	else {
-		if(!isSuspended)
+		if(!primary_display_is_sleepd())
 			cpus_online_all();
 		else
 			thunderplug_suspend();
