@@ -28,7 +28,7 @@
 #include <mach/upmu_hw.h>
 #include <mt-plat/upmu_common.h>
 
-#define MAX_VIBR 7
+#define MAX_VIBR 9
 #define MIN_VIBR 0
 
 #define ENGINE_VERSION  1
