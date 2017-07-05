@@ -13,3 +13,4 @@ obj-$(CONFIG_ARCH_MT6753) += common/
 obj-$(CONFIG_ARCH_MT6580) += common/
 obj-$(CONFIG_ARCH_MT6755) += common/
 obj-$(CONFIG_ARCH_MT6797) += common/
+obj-$(CONFIG_MTK_PP_CONTROL) += pp_control/

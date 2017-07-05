@@ -16,6 +16,15 @@ config MTK_VIDEOX
 	help
 	  CONFIG_MTK_VIDEOX
 
+config MTK_PP_CONTROL
+	bool CONFIG_MTK_PP_CONTROL	
+	depends on MTK_FB
+	depends on MTK_VIDEOX	
+	default n
+	help
+		Enable the interface for post processing control.
+
+
 config MTK_LCM_PHYSICAL_ROTATION
 	string "MTK_LCM_PHYSICAL_ROTATION"
 	help
