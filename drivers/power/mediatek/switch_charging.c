@@ -58,7 +58,7 @@
 #endif
 
 #ifdef CONFIG_FORCE_FAST_CHARGE
-#include <linux/fastchg.h>
+#include <linux/fast_charging.h>
 #endif
 
 /* ============================================================ // */
