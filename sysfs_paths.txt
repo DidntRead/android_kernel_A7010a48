@@ -1,0 +1,17 @@
+sys/kernel/fast_charge/force_fast_charge (RW)(1 - Force 1A usb charging current, 0 - disable)
+
+sys/kernel/thunderquake_engine/level (RW)(0-9 Strength of haptic feedback)
+sys/kernel/thunderquake_engine/min (RO)(Minimum value of level)
+sys/kernel/thunderquake_engine/max (RO)(Maximum value of level)
+sys/kernel/thunderquake_engine/engine_version (RO)(Thunderquake engine version)
+
+sys/devices/platform/pp_control.0/enable (RW)(1 - Enable all controls 0 - Disable all controls)
+sys/devices/platform/pp_control.0/min (RW)(1-2000 Minimum value for r, g, b values)
+sys/devices/platform/pp_control.0/version (RO)(Post processing control version)
+sys/devices/platform/pp_control.0/rgb (RW)(min-2000 min-2000 min-2000
+controls rgb values)
+sys/devices/platform/pp_control.0/sat (RW)(0 - Grayscale 1-x Controls display saturation)  Currently has no limit, will add later
+sys/devices/platform/pp_control.0/cont (RW)(0-x Controls display contrast)  Currently has no limit, will add later
+sys/devices/platform/pp_control.0/rw_dump (RW)(read-write variable dump) Will be removed later
+
+
