@@ -57,6 +57,9 @@
 #include <mach/diso.h>
 #endif
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endif
 
 /* ============================================================ // */
 /* define */
@@ -1119,7 +1122,15 @@ void select_charging_current(void)
 				else if (g_usb_state == USB_UNCONFIGURED)
 					g_temp_CC_value = batt_cust_data.usb_charger_current_unconfigured;
 				else if (g_usb_state == USB_CONFIGURED)
+					#ifdef CONFIG_FORCE_FAST_CHARGE
+					if (force_fast_charge > 0) {
+					g_temp_CC_value = CHARGE_CURRENT_900_00_MA
+					} else if (force_fast_charge == 0) {
 					g_temp_CC_value = batt_cust_data.usb_charger_current_configured;
+					}
+					#else
+					g_temp_CC_value = batt_cust_data.usb_charger_current_configured;
+					#endif
 				else
 					g_temp_CC_value = batt_cust_data.usb_charger_current_unconfigured;
 

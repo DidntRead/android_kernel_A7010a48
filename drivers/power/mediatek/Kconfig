@@ -310,3 +310,10 @@ config LENOVO_CHARGING_STANDARD_SUPPORT
 	help
 	  Say Y to include support for lenovo charging standard.
 #end, lenovo-sw mahj2 add for lenovo charging at 20150402
+
+config FORCE_FAST_CHARGE
+	bool "Force faster charge rate for USB"
+	default n
+	help
+	  This allows users to override default charge rate for USB
+
