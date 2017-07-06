@@ -49,7 +49,11 @@ static ssize_t vibr_vtg_store(struct kobject *kobj, struct kobj_attribute *attr,
     struct vibrator_hw* hw = mt_get_cust_vibrator_hw();
 	sscanf(buf, "%u", &val);
 	if(val>=MIN_VIBR && val <=MAX_VIBR) {
-       pmic_set_register_value(PMIC_RG_VIBR_VOSEL, val);
+	if (val == 0) {
+	pmic_set_register_value(PMIC_RG_VIBR_EN, 0);
+	} else
+       pmic_set_register_value(PMIC_RG_VIBR_EN, 1);
+       pmic_set_register_value(PMIC_RG_VIBR_VOSEL, val - 1);
        hw->vib_vol=val;
     }
     
