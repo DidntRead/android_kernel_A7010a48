@@ -1,8 +1,8 @@
 Display Post processing:
-Disable/Enable - rgb resets on screen state change
+Disable/Enable - rgb resets on screen state change (Fixed in v1.6 and above)
 RGB - done
 Saturation - done
-Hue
+Hue - WIP
 Contrast -  done (v1.4 and above)
 Grayscale - done
 Invertion
