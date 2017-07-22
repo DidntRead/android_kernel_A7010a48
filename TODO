@@ -19,7 +19,9 @@ Sound:
 Find control registers - done
 Speaker gain control - done
 Headphone sound control - done
-Mic gain control
+Mic gain control - done
+Mic PGA control
+Register locking - done
 
 Charging:
 USB Fast Charge - done
