@@ -47,7 +47,6 @@ struct pp_data {
 	int hue;	
 	int cont;
 	int brightness;
-	unsigned int coef[3][3];
 };
 
 extern void color_trigger_refresh(DISP_MODULE_ENUM module);

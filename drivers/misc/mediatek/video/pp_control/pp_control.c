@@ -163,53 +163,6 @@ static ssize_t green_store(struct device *dev,
 	return count;
 }
 
-static ssize_t ccor_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
-{
-	struct pp_data *pp_data = dev_get_drvdata(dev);
-
-	return scnprintf(buf, PAGE_SIZE, "%u %u %u %u %u %u %u %u %u\n", pp_data->coef[0][0], pp_data->coef[0][1], pp_data->coef[0][2], pp_data->coef[1][0], pp_data->coef[1][1], pp_data->coef[1][2], pp_data->coef[2][0], pp_data->coef[2][1], pp_data->coef[2][2]);
-}
-
-static ssize_t ccor_store(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t count)
-{
-	int one,two,three,four,five,six,seven,eight,nine, ret;
-	struct pp_data *pp_data = dev_get_drvdata(dev);
-	#define CCORR_REG(base, idx) (base + (idx) * 4 + 0x80)
-	const unsigned long ccorr_base = DISPSYS_CCORR_BASE;
-	ret = sscanf(buf, "%u %u %u %u %u %u %u %u %u", &one, &two, &three, &four, &five, &six, &seven, &eight, &nine);
-
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
-
-	pp_data->coef[0][0] = one;
-	pp_data->coef[0][1] = two;
-	pp_data->coef[0][2] = three;
-	pp_data->coef[1][0] = four;
-	pp_data->coef[1][1] = five;
-	pp_data->coef[1][2] = six;
-	pp_data->coef[2][0] = seven;
-	pp_data->coef[2][1] = eight;
-	pp_data->coef[2][2] = nine;
-
-	DISP_REG_SET(NULL, DISP_REG_CCORR_EN, 1);
-	DISP_REG_MASK(NULL, DISP_REG_CCORR_CFG, 0x2, 0x2);
-
-	DISP_REG_SET(NULL, CCORR_REG(ccorr_base, 0), //RED
-		     ((one << 16) | (two)));
-	DISP_REG_SET(NULL, CCORR_REG(ccorr_base, 1),
-		     ((three << 16) | (four)));
-	DISP_REG_SET(NULL, CCORR_REG(ccorr_base, 2),  //GREEN
-		     ((five << 16) | (six)));
-	DISP_REG_SET(NULL, CCORR_REG(ccorr_base, 3),	
-		     ((seven << 16) | (eight)));
-	DISP_REG_SET(NULL, CCORR_REG(ccorr_base, 4), (nine << 16));  //BLUE
-
-	return count;
-}
-
 static ssize_t green_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -413,7 +366,6 @@ static DEVICE_ATTR(red, S_IWUSR | S_IRUGO, red_show, red_store);
 static DEVICE_ATTR(brightness, S_IWUSR | S_IRUGO, brig_show, brig_store);
 static DEVICE_ATTR(cont, S_IWUSR | S_IRUGO, cont_show, cont_store);
 static DEVICE_ATTR(min, S_IWUSR | S_IRUGO, min_show, min_store);
-static DEVICE_ATTR(ccor, S_IWUSR | S_IRUGO, ccor_show, ccor_store);
 static DEVICE_ATTR(version, S_IWUSR | S_IRUGO, version_show, NULL);
 static DEVICE_ATTR(enable, S_IWUSR | S_IRUGO, enable_show,
 	enable_store);
@@ -441,15 +393,6 @@ static int pp_control_probe(struct platform_device *pdev)
 	pp_data->sat = DISP_REG_GET(DISP_COLOR_G_PIC_ADJ_MAIN_2);
 	pp_data->cont = 128;
 	pp_data->brightness = 1024;
-	pp_data->coef[0][0] = 1024;
-	pp_data->coef[0][1] = 0;
-	pp_data->coef[0][2] = 0;
-	pp_data->coef[1][0] = 0;
-	pp_data->coef[1][1] = 1024;
-	pp_data->coef[1][2] = 0;
-	pp_data->coef[2][0] = 0;
-	pp_data->coef[2][1] = 0;
-	pp_data->coef[2][2] = 1024;
 	/*	
 	pp_data->hue_purple = 128;
 	pp_data->hue_skin = 128;
@@ -468,7 +411,6 @@ static int pp_control_probe(struct platform_device *pdev)
 	ret |= device_create_file(&pdev->dev, &dev_attr_blue);
 	ret |= device_create_file(&pdev->dev, &dev_attr_green);
 	ret |= device_create_file(&pdev->dev, &dev_attr_red);
-	ret |= device_create_file(&pdev->dev, &dev_attr_ccor);
 
 
 
@@ -492,7 +434,6 @@ static int pp_control_remove(struct platform_device *pdev)
 	device_remove_file(&pdev->dev, &dev_attr_blue);
 	device_remove_file(&pdev->dev, &dev_attr_green);
 	device_remove_file(&pdev->dev, &dev_attr_red);
-	device_remove_file(&pdev->dev, &dev_attr_ccor);
 
 
 
