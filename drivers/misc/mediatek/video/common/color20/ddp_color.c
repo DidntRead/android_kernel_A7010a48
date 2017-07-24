@@ -949,14 +949,14 @@ DISPLAY_TDSHP_T *get_TDSHP_index(void)
 	return &g_TDSHP_Index;
 }
 
-static void _color_reg_set(void *__cmdq, unsigned long addr, unsigned int value)
+void _color_reg_set(void *__cmdq, unsigned long addr, unsigned int value)
 {
 	cmdqRecHandle cmdq = (cmdqRecHandle) __cmdq;
 
 	DISP_REG_SET(cmdq, addr, value);
 }
 
-static void _color_reg_mask(void *__cmdq, unsigned long addr, unsigned int value, unsigned int mask)
+void _color_reg_mask(void *__cmdq, unsigned long addr, unsigned int value, unsigned int mask)
 {
 	cmdqRecHandle cmdq = (cmdqRecHandle) __cmdq;
 
@@ -1269,7 +1269,7 @@ void DpEngine_COLORonConfig(DISP_MODULE_ENUM module, void *__cmdq)
 }
 
 
-static void color_trigger_refresh(DISP_MODULE_ENUM module)
+void color_trigger_refresh(DISP_MODULE_ENUM module)
 {
 	if (g_color_cb != NULL)
 		g_color_cb(module, DISP_PATH_EVENT_TRIGGER);
