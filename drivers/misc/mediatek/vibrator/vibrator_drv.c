@@ -201,7 +201,6 @@ static void vib_shutdown(struct platform_device *pdev)
 		spin_unlock_irqrestore(&vibe_lock, flags);
 	}
 }
-
 /******************************************************************************
 Device driver structure
 *****************************************************************************/
