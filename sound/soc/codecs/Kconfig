@@ -854,3 +854,8 @@ config SND_SOC_MAX98926
   default n
   help
       for max98926 codec
+
+config SOUND_CONTROL
+  bool "Sound control for wm8281"
+  depends on SND_SOC_FLORIDA
+  default n

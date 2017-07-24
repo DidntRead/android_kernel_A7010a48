@@ -2144,11 +2144,152 @@ static int florida_get_codec_caps(struct snd_compr_stream *stream,
 	return 0;
 }
 
+#ifdef CONFIG_SOUND_CONTROL
+static struct snd_soc_codec *sound_control_ptr;
+int snd_ctrl_input_locked = 0;
+int snd_ctrl_output_locked = 0;
+EXPORT_SYMBOL_GPL(snd_ctrl_input_locked);
+EXPORT_SYMBOL_GPL(snd_ctrl_output_locked);
+
+static ssize_t headphone_gain_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf) 
+{
+unsigned int left, right;
+left = snd_soc_read(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_1L);
+right = snd_soc_read(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_1R);
+return snprintf(buf, PAGE_SIZE, "%u %u\n", (left & 255), (right & 255));
+}
+
+static ssize_t headphone_gain_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) //Tested and working (Register value is 0 while headphones arent plugged in)
+{
+	unsigned int left, right;
+	sscanf(buf, "%u %u", &left, &right);
+	if ((left & 255) < 0 || (left & 255) > 169 || (right & 255) < 0 || (right & 255) > 169) 
+	{
+	return -EINVAL;
+	}
+	int old_status = snd_ctrl_output_locked;
+	snd_ctrl_output_locked = 0;
+	snd_soc_update_bits(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_1L, 255, left);
+	snd_soc_update_bits(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_1R, 255, right);
+    	snd_ctrl_output_locked = old_status;
+	return count;
+}
+
+static ssize_t speaker_gain_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)  
+{
+unsigned int left, right;
+left = snd_soc_read(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_4L);
+right = snd_soc_read(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_4R);
+return snprintf(buf, PAGE_SIZE, "%u %u\n", (left & 255), (right & 255));
+}
+
+static ssize_t speaker_gain_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) //TESTED AND WORKING
+{
+	unsigned int left, right;
+	sscanf(buf, "%u %u", &left, &right);
+	if ((left & 255) < 0 || (left & 255) > 169 || (right & 255) < 0 || (right & 255) > 169) 
+	{
+	return -EINVAL;
+	}
+	int old_status = snd_ctrl_output_locked;
+	snd_ctrl_output_locked = 0;
+	snd_soc_update_bits(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_4L, 255, left);
+	snd_soc_update_bits(sound_control_ptr, ARIZONA_DAC_DIGITAL_VOLUME_4R, 255, right);
+    	snd_ctrl_output_locked = old_status;
+	return count;
+}
+
+static ssize_t output_lock_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)  
+{
+return snprintf(buf, PAGE_SIZE, "%d\n", snd_ctrl_output_locked);
+}
+
+static ssize_t output_lock_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) // Tested and working
+{
+	int lock;
+	sscanf(buf, "%d", &lock);
+	if (lock > 1 || lock < 0) 
+	{
+	return -EINVAL;
+	}	
+	snd_ctrl_output_locked = lock;
+    
+	return count;
+}
+
+static ssize_t input_lock_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)  
+{
+return snprintf(buf, PAGE_SIZE, "%d\n", snd_ctrl_input_locked);
+}
+
+static ssize_t input_lock_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) // Tested and working
+{
+	int lock;
+	sscanf(buf, "%d", &lock);
+	if (lock > 1 || lock < 0) 
+	{
+	return -EINVAL;
+	}	
+	snd_ctrl_input_locked = lock;
+    
+	return count;
+}
+
+static ssize_t mic_gain_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)  
+{
+unsigned int left, right;
+left = snd_soc_read(sound_control_ptr, ARIZONA_ADC_DIGITAL_VOLUME_1L);
+right = snd_soc_read(sound_control_ptr, ARIZONA_ADC_DIGITAL_VOLUME_1R);
+return snprintf(buf, PAGE_SIZE, "%u %u\n", (left & 255), (right & 255));
+}
+
+static ssize_t mic_gain_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) //Needs testing
+{
+	unsigned int left, right;
+	sscanf(buf, "%u %u", &left, &right);
+	if ((left & 255) < 0 || (left & 255) > 169 || (right & 255) < 0 || (right & 255) > 169) 
+	{
+	return count;
+	}
+	int old_status = snd_ctrl_input_locked;
+	snd_ctrl_input_locked = 0;
+	snd_soc_update_bits(sound_control_ptr, ARIZONA_ADC_DIGITAL_VOLUME_1L, 255, left);
+	snd_soc_update_bits(sound_control_ptr, ARIZONA_ADC_DIGITAL_VOLUME_1R, 255, right);
+    	snd_ctrl_input_locked = old_status;
+	return count;
+}
+
+static struct kobj_attribute headphone_gain_attribute = __ATTR(headphone_gain, 0664, headphone_gain_show, headphone_gain_store);
+static struct kobj_attribute speaker_gain_attribute = __ATTR(speaker_gain, 0664, speaker_gain_show, speaker_gain_store);
+static struct kobj_attribute mic_gain_attribute = __ATTR(mic_gain, 0664, mic_gain_show, mic_gain_store);
+static struct kobj_attribute snd_ctrl_input_lock_attribute = __ATTR(input_lock, 0664, input_lock_show, input_lock_store);
+static struct kobj_attribute snd_ctrl_output_lock_attribute = __ATTR(output_lock, 0664, output_lock_show, output_lock_store);
+
+static struct attribute *sound_control_attrs[] = {
+&headphone_gain_attribute.attr,
+&speaker_gain_attribute.attr,
+&mic_gain_attribute.attr,
+&snd_ctrl_input_lock_attribute.attr,
+&snd_ctrl_output_lock_attribute.attr,
+NULL,
+};
+
+static struct attribute_group sound_control_attr_group = {
+.attrs = sound_control_attrs,
+};
+
+static struct kobject *sound_control_kobj;
+#endif
+
 static int florida_codec_probe(struct snd_soc_codec *codec)
 {
 	struct florida_priv *priv = snd_soc_codec_get_drvdata(codec);
 	struct arizona *arizona = priv->core.arizona;
 	int i, ret;
+
+	#ifdef CONFIG_SOUND_CONTROL
+	sound_control_ptr = codec;
+	#endif
 
 	priv->core.arizona->dapm = &codec->dapm;
 
@@ -2357,6 +2498,18 @@ static int florida_probe(struct platform_device *pdev)
 		snd_soc_unregister_platform(&pdev->dev);
 		goto error;
 	}
+
+	#ifdef CONFIG_SOUND_CONTROL
+	sound_control_kobj = kobject_create_and_add("wm_sound_control", kernel_kobj);
+	if (sound_control_kobj == NULL) {
+	pr_warn("kobject create failed");
+	}
+
+	ret = sysfs_create_group(sound_control_kobj, &sound_control_attr_group);
+	if (ret) {
+	pr_warn("sysfs file create failed");
+	}
+	#endif
 
 	return ret;
 

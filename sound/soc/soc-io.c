@@ -103,7 +103,16 @@ int snd_soc_component_update_bits(struct snd_soc_component *component,
 {
 	bool change;
 	int ret;
-
+	extern int snd_ctrl_input_locked;
+	extern int snd_ctrl_output_locked;
+	if ((snd_ctrl_output_locked == 1) && (reg == 0x411 || reg == 0x415 || reg == 0x429 || reg == 0x42D)) 
+	{ // Not the best way but it works
+	return -1;
+	}
+	if ((snd_ctrl_input_locked == 1) && (reg == 0x311 || reg == 0x315)) 
+	{ // Not the best way but it works
+	return -1;
+	}
 	if (component->regmap)
 		ret = regmap_update_bits_check(component->regmap, reg, mask,
 			val, &change);
