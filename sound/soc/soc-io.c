@@ -103,6 +103,7 @@ int snd_soc_component_update_bits(struct snd_soc_component *component,
 {
 	bool change;
 	int ret;
+	#ifdef CONFIG_SOUND_CONTROL
 	extern int snd_ctrl_input_locked;
 	extern int snd_ctrl_output_locked;
 	if ((snd_ctrl_output_locked == 1) && (reg == 0x411 || reg == 0x415 || reg == 0x429 || reg == 0x42D)) 
@@ -113,6 +114,7 @@ int snd_soc_component_update_bits(struct snd_soc_component *component,
 	{ // Not the best way but it works
 	return -1;
 	}
+	#endif
 	if (component->regmap)
 		ret = regmap_update_bits_check(component->regmap, reg, mask,
 			val, &change);
