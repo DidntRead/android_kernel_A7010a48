@@ -38,6 +38,8 @@
 #include <linux/input.h>
 #if FTS_GESTRUE_EN
 #include "ft_gesture_lib.h"
+#include <linux/proximity_status.h>
+extern int get_tp_pocket_mode(void);
 
 /*******************************************************************************
 * Private constant and macro definitions using #define
@@ -109,12 +111,11 @@ int fts_Gesture_init(struct input_dev *input_dev)
 	/*
 	 *init_para(480,854,60,0,0);
 	 */
-
-	input_set_capability(input_dev, EV_KEY, KEY_SLIDE);
+	input_set_capability(input_dev, EV_KEY, KEY_WAKEUP);
 	/*
 	 *input_set_capability(input_dev, EV_KEY, KEY_POWER);
 	 */
-	__set_bit(KEY_SLIDE, input_dev->keybit);
+	__set_bit(KEY_WAKEUP, input_dev->keybit);
 #if 0
 	input_set_capability(input_dev, EV_KEY, KEY_GESTURE_U);
 	input_set_capability(input_dev, EV_KEY, KEY_GESTURE_UP);
@@ -159,6 +160,7 @@ static void fts_check_gesture(struct input_dev *input_dev, int gesture_id)
 	/*
 	 *printk("fts gesture_id==0x%x\n ",gesture_id);
 	 */
+
 	fts_gesture_letter = 0 ;
 	switch (gesture_id) {
 #if 0 /*change by lixh10  */
@@ -261,10 +263,14 @@ static void fts_check_gesture(struct input_dev *input_dev, int gesture_id)
 		break;
 	}
 	if (fts_gesture_letter != 0) {
-		input_report_key(tpd->dev, KEY_SLIDE, 1);
+		/*if (get_tp_pocket_mode() == 1 && ps_status() == 0) { TODO: Implement a proper function for getting PS sensor status
+		TPD_DEBUG("Gesture cancelled by pocket mode\n");
+		} else { */
+		input_report_key(tpd->dev, KEY_WAKEUP, 1);
 		input_sync(tpd->dev);
-		input_report_key(tpd->dev, KEY_SLIDE, 0);
+		input_report_key(tpd->dev, KEY_WAKEUP, 0);
 		input_sync(tpd->dev);
+		//}
 	}
 	dev_err(&fts_i2c_client->dev, "ahe fts gesture funtion~~~~ %02x .\n", fts_gesture_letter);
 }
