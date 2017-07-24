@@ -2,7 +2,7 @@ Display Post processing:
 Disable/Enable - rgb resets on screen state change (Fixed in v1.6 and above)
 RGB - done
 Saturation - done
-Hue - WIP
+Hue - done
 Contrast -  done (v1.4 and above)
 Grayscale - done
 Invertion
@@ -16,8 +16,12 @@ Leds:
 Control
 
 Sound:
-Find control registers
-Implement sound control
+Find control registers - done
+Speaker gain control - done
+Headphone sound control - done
+Mic gain control - done
+Mic PGA control
+Register locking - done
 
 Charging:
 USB Fast Charge - done
