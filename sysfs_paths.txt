@@ -12,6 +12,8 @@ sys/devices/platform/pp_control.0/rgb (RW)(min-2000 min-2000 min-2000
 controls rgb values)
 sys/devices/platform/pp_control.0/sat (RW)(0 - Grayscale 1-x Controls display saturation)  Currently has no limit, will add later
 sys/devices/platform/pp_control.0/cont (RW)(0-x Controls display contrast)  Currently has no limit, will add later
-sys/devices/platform/pp_control.0/rw_dump (RW)(read-write variable dump) Will be removed later
+
+sys/kernel/wm_sound_control/headphone_gain (RW) (88-148 88 = -20dB gain, 128 = 0dB gain, 148 = 10dB gain)
+sys/kernel/wm_sound_control/speaker_gain (RW) (88-148 88 = -20dB gain, 128 = 0dB gain, 148 = 10dB gain)
 
 
