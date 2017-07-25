@@ -104,3 +104,5 @@ noclean_build.sh
 # AnyKernel
 anykernel2/DarknessKernel.zip
 anykernel2/Image.gz-dtb
+
+arch/arm64/boot/dts/cust.dtsi
