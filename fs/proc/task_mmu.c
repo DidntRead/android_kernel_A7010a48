@@ -516,31 +516,6 @@ static inline unsigned char swap_count(unsigned char ent)
 }
 #endif
 
-
-	mss->resident += size;
-	/* Accumulate the size in pages that have been accessed. */
-	if (young || PageReferenced(page))
-		mss->referenced += size;
-	mapcount = page_mapcount(page);
-	if (mapcount >= 2) {
-		u64 pss_delta;
-
-		if (dirty || PageDirty(page))
-			mss->shared_dirty += size;
-		else
-			mss->shared_clean += size;
-		pss_delta = (u64)size << PSS_SHIFT;
-		do_div(pss_delta, mapcount);
-		mss->pss += pss_delta;
-	} else {
-		if (dirty || PageDirty(page))
-			mss->private_dirty += size;
-		else
-			mss->private_clean += size;
-		mss->pss += (u64)size << PSS_SHIFT;
-	}
-}
-
 static void smaps_account(struct mem_size_stats *mss, struct page *page,
 		unsigned long size, bool young, bool dirty)
 {
@@ -594,7 +569,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 #endif /* CONFIG_SWAP*/
 			mss->swap += PAGE_SIZE;;
 #ifdef CONFIG_SWAP
-			entry = pte_to_swp_entry(ptent);
+			entry = pte_to_swp_entry(*pte);
 			if (non_swap_entry(entry))
 				return;
 			p = swap_info_get(entry);
@@ -611,7 +586,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 				else
 					mss->pswap += (ptent_size << PSS_SHIFT) / swapcount;
 #else
-				mss->pswap += (ptent_size << PSS_SHIFT) / swapcount;
+				mss->pswap += (PAGE_SIZE << PSS_SHIFT) / swapcount;
 #endif
 				swap_info_unlock(p);
 			}
