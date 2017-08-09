@@ -16,18 +16,15 @@
  */
 #ifndef L3M6DS3_GY_H
 #define L3M6DS3_GY_H
-
+	 
 #include <linux/ioctl.h>
-
+	 
 #define LSM6DS3_I2C_SLAVE_ADDR		0xD0
 #define LSM6DS3_FIXED_DEVID			0x69
 
 
 /* LSM6DS3 Register Map  (Please refer to LSM6DS3 Specifications) */
-/*lenovo-sw caoyi1 modify 20150325 begin*/
-#define LSM6DS3_FUNC_CFG_ACCESS  0x01
-//#define LSM6DS3_FUNC_CFG_ACCESS  0x00
-/*lenovo-sw caoyi1 modify 20150325 end*/
+#define LSM6DS3_FUNC_CFG_ACCESS  0x00
 #define LSM6DS3_SENSOR_SYNC_TIME_FRAME 0X04
 
 /*FIFO control register*/
@@ -234,15 +231,11 @@
 #define LSM6DS3_ACC_ENABLE_AXIS_Z 0x20
 
 
-
-#define LSM6DS3_GYRO_SENSITIVITY_125DPS		4375	/*udps/LSB*/
-#define LSM6DS3_GYRO_SENSITIVITY_245DPS		8750	/*udps/LSB*/
-#define LSM6DS3_GYRO_SENSITIVITY_500DPS		17500	/*udps/LSB*/
-#define LSM6DS3_GYRO_SENSITIVITY_1000DPS	35000	/*udps/LSB*/
-/*lenovo-sw caoyi1 modify fix gyro data vilation 20150608 begin*/
-//#define LSM6DS3_GYRO_SENSITIVITY_2000DPS	70000	/*udps/LSB*/
-#define LSM6DS3_GYRO_SENSITIVITY_2000DPS	70	/*mdps/LSB*/
-/*lenovo-sw caoyi1 modify fix gyro data vilation 20150608 end*/
+#define LSM6DS3_GYRO_SENSITIVITY_125DPS                44      /*mdps/LSB*/
+#define LSM6DS3_GYRO_SENSITIVITY_245DPS                87      /*mdps/LSB*/
+#define LSM6DS3_GYRO_SENSITIVITY_500DPS                17      /*mdps/LSB*/
+#define LSM6DS3_GYRO_SENSITIVITY_1000DPS       35      /*mdps/LSB*/
+#define LSM6DS3_GYRO_SENSITIVITY_2000DPS       70      /*mdps/LSB*/
 
 #define LSM6DS3_GYRO_ENABLE_AXIS_MASK 0x38
 #define LSM6DS3_GYRO_ENABLE_AXIS_X 0x08
@@ -263,6 +256,6 @@
 // 1 rad = 180/PI degree, L3G4200D_OUT_MAGNIFY = 131,
 // 180*131/PI = 7506
 #define DEGREE_TO_RAD	7506  //180*1000000/PI//7506  // fenggy mask
-//#define DEGREE_TO_RAD 819
+//#define DEGREE_TO_RAD 819	 
 #endif //L3M6DS3_GY_H
 
