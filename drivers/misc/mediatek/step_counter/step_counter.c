@@ -3,7 +3,7 @@
 #include <linux/delay.h>
 
 /* step counter sensor interrupt mode support -- modified by liaoxl.lenovo 7.12.2015 start  */
-#define STEP_COUNTER_INT_MODE_SUPPORT
+//#define STEP_COUNTER_INT_MODE_SUPPORT
 /* step counter sensor interrupt mode support -- modified by liaoxl.lenovo 7.12.2015 end */
 
 static struct step_c_context *step_c_context_obj = NULL;

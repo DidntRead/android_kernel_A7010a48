@@ -24,6 +24,7 @@
 #include <linux/workqueue.h>
 #include <linux/kobject.h>
 #include <linux/platform_device.h>
+#include <linux/irqchip/mt-eic.h>
 #include "cust_acc.h"
 #include "accel.h"
 #include "lsm6ds3.h"
@@ -38,10 +39,11 @@
 
 #define POWER_NONE_MACRO MT65XX_POWER_NONE
 
+#define LSM6DS3_CALIB_HAL
 #define LSM6DS3_NEW_ARCH				//kk and L compatialbe
-//#define LSM6DS3_STEP_COUNTER 			//it depends on the MACRO LSM6DS3_NEW_ARCH
+#define LSM6DS3_STEP_COUNTER 			//it depends on the MACRO LSM6DS3_NEW_ARCH
 //#define LSM6DS3_TILT_FUNC 				//dependency on LSM6DS3_STEP_COUNTER
-//#define LSM6DS3_SIGNIFICANT_MOTION  	//dependency on LSM6DS3_STEP_COUNTER
+#define LSM6DS3_SIGNIFICANT_MOTION  	//dependency on LSM6DS3_STEP_COUNTER
 
 #ifndef LSM6DS3_NEW_ARCH		//new sensor type depend on new arch
 #undef LSM6DS3_STEP_COUNTER
@@ -68,12 +70,12 @@
 
 #endif
 /****************************************************************/
-#if defined(LSM6DS3_TILT_FUNC) //|| defined(LSM6DS3_SIGNIFICANT_MOTION)	
-#define GPIO_LSM6DS3_EINT_PIN GPIO_ALS_EINT_PIN		//eint gpio pin num
-#define GPIO_LSM6DS3_EINT_PIN_M_EINT GPIO_ALS_EINT_PIN_M_EINT	//eint mode
-#define CUST_EINT_LSM6DS3_NUM CUST_EINT_ALS_NUM		//eint num
-#define CUST_EINT_LSM6DS3_DEBOUNCE_CN CUST_EINT_ALS_DEBOUNCE_CN //debounce time
-#define CUST_EINT_LSM6DS3_TYPE CUST_EINT_ALS_TYPE	//eint trigger type
+#if defined(LSM6DS3_TILT_FUNC) || defined(LSM6DS3_SIGNIFICANT_MOTION)	
+#define GPIO_LSM6DS3_EINT_PIN GPIO11		//eint gpio pin num
+#define GPIO_LSM6DS3_EINT_PIN_M_EINT 0	//eint mode
+#define CUST_EINT_LSM6DS3_NUM 11		//eint num
+#define CUST_EINT_LSM6DS3_DEBOUNCE_CN 0 //debounce time
+#define CUST_EINT_LSM6DS3_TYPE 0	//eint trigger type
 #endif
 /*---------------------------------------------------------------------------*/
 #define DEBUG 1
@@ -92,6 +94,9 @@
 static const struct i2c_device_id lsm6ds3_i2c_id[] = {{LSM6DS3_ACC_DEV_NAME,0},{}};
 //static struct i2c_board_info __initdata i2c_lsm6ds3={ I2C_BOARD_INFO(LSM6DS3_ACC_DEV_NAME, (0xD4>>1))};
 
+#ifdef LSM6DS3_CALIB_HAL
+static int calib_acc_offset[3] = {0,0,0};
+#endif
 
 /*----------------------------------------------------------------------------*/
 static int lsm6ds3_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id);
@@ -107,7 +112,7 @@ static int lsm6ds3_acc_suspend(struct i2c_client *client, pm_message_t msg);
 static int lsm6ds3_acc_resume(struct i2c_client *client);
 #endif
 static int LSM6DS3_acc_SetSampleRate(struct i2c_client *client, u8 sample_rate);
-#ifdef LSM6DS3_TILT_FUNC
+#if defined(LSM6DS3_STEP_COUNTER) || defined(LSM6DS3_TILT_FUNC)
 static int LSM6DS3_acc_Enable_Func(struct i2c_client *client, LSM6DS3_ACC_GYRO_FUNC_EN_t newValue);
 #endif
 #if defined(LSM6DS3_SIGNIFICANT_MOTION) || defined(LSM6DS3_TILT_FUNC)
@@ -1093,7 +1098,7 @@ static int LSM6DS3_Enable_SigMotion_Func(struct i2c_client *client, LSM6DS3_ACC_
 #endif
 #endif
 
-#ifdef LSM6DS3_TILT_FUNC
+#if defined(LSM6DS3_STEP_COUNTER) || defined(LSM6DS3_TILT_FUNC)
 static int LSM6DS3_acc_Enable_Func(struct i2c_client *client, LSM6DS3_ACC_GYRO_FUNC_EN_t newValue)
 {
 	u8 databuf[2] = {0}; 
@@ -1246,7 +1251,7 @@ static int LSM6DS3_Get_Pedo_DataReg(struct i2c_client *client, u16 *Value)
 		return -2;
 	}
 
-	*Value = (databuf[1]<<8)|databuf[0];	
+	*Value = ((uint16_t)databuf[1]<<8)|databuf[0];	
 
 	return LSM6DS3_SUCCESS;
 }
@@ -1288,7 +1293,7 @@ static int LSM6DS3_ReadAccData(struct i2c_client *client, char *buf, int bufsize
 	}
 	else
 	{
-	#if 1
+	#if 0
     obj->data[LSM6DS3_AXIS_X] = (obj->data[LSM6DS3_AXIS_X])/1000 * obj->sensitivity*GRAVITY_EARTH_1000; //NTC
     obj->data[LSM6DS3_AXIS_Y] = (obj->data[LSM6DS3_AXIS_Y])/1000 * obj->sensitivity*GRAVITY_EARTH_1000;
     obj->data[LSM6DS3_AXIS_Z] = (obj->data[LSM6DS3_AXIS_Z])/1000 * obj->sensitivity*GRAVITY_EARTH_1000;
@@ -1298,7 +1303,7 @@ static int LSM6DS3_ReadAccData(struct i2c_client *client, char *buf, int bufsize
     obj->data[LSM6DS3_AXIS_X] = (obj->data[LSM6DS3_AXIS_X]) /1000; //NTC
     obj->data[LSM6DS3_AXIS_Y] = (obj->data[LSM6DS3_AXIS_Y]) /1000;
     obj->data[LSM6DS3_AXIS_Z] = (obj->data[LSM6DS3_AXIS_Z]) /1000;
-		/*remap coordinate*/
+		//remap coordinate
 		acc[obj->cvt.map[LSM6DS3_AXIS_X]] = obj->cvt.sign[LSM6DS3_AXIS_X]*obj->data[LSM6DS3_AXIS_X];
 		acc[obj->cvt.map[LSM6DS3_AXIS_Y]] = obj->cvt.sign[LSM6DS3_AXIS_Y]*obj->data[LSM6DS3_AXIS_Y];
 		acc[obj->cvt.map[LSM6DS3_AXIS_Z]] = obj->cvt.sign[LSM6DS3_AXIS_Z]*obj->data[LSM6DS3_AXIS_Z];
@@ -1312,8 +1317,38 @@ static int LSM6DS3_ReadAccData(struct i2c_client *client, char *buf, int bufsize
 		acc[LSM6DS3_AXIS_Z] = acc[LSM6DS3_AXIS_Z] * GRAVITY_EARTH_1000 / obj->reso->sensitivity;		
 		*/
 	#endif
+	#if 1
+     	obj->data[LSM6DS3_AXIS_X] = (s64)(obj->data[LSM6DS3_AXIS_X]) * obj->sensitivity*GRAVITY_EARTH_1000/(1000*1000); //NTC
+        obj->data[LSM6DS3_AXIS_Y] = (s64)(obj->data[LSM6DS3_AXIS_Y]) * obj->sensitivity*GRAVITY_EARTH_1000/(1000*1000);
+        obj->data[LSM6DS3_AXIS_Z] = (s64)(obj->data[LSM6DS3_AXIS_Z]) * obj->sensitivity*GRAVITY_EARTH_1000/(1000*1000);
 
+        obj->data[LSM6DS3_AXIS_X] += obj->cali_sw[LSM6DS3_AXIS_X];
+        obj->data[LSM6DS3_AXIS_Y] += obj->cali_sw[LSM6DS3_AXIS_Y];
+        obj->data[LSM6DS3_AXIS_Z] += obj->cali_sw[LSM6DS3_AXIS_Z];
 
+        /*remap coordinate*/
+        acc[obj->cvt.map[LSM6DS3_AXIS_X]] = obj->cvt.sign[LSM6DS3_AXIS_X]*obj->data[LSM6DS3_AXIS_X];
+        acc[obj->cvt.map[LSM6DS3_AXIS_Y]] = obj->cvt.sign[LSM6DS3_AXIS_Y]*obj->data[LSM6DS3_AXIS_Y];
+        acc[obj->cvt.map[LSM6DS3_AXIS_Z]] = obj->cvt.sign[LSM6DS3_AXIS_Z]*obj->data[LSM6DS3_AXIS_Z];
+
+        //GSE_LOG("Mapped gsensor data: %d, %d, %d!\n", acc[LSM6DS3_AXIS_X], acc[LSM6DS3_AXIS_Y], acc[LSM6DS3_AXIS_Z]);
+
+        //Out put the mg
+        /*
+        acc[LSM6DS3_AXIS_X] = acc[LSM6DS3_AXIS_X] * GRAVITY_EARTH_1000 / obj->reso->sensitivity;
+        acc[LSM6DS3_AXIS_Y] = acc[LSM6DS3_AXIS_Y] * GRAVITY_EARTH_1000 / obj->reso->sensitivity;
+        acc[LSM6DS3_AXIS_Z] = acc[LSM6DS3_AXIS_Z] * GRAVITY_EARTH_1000 / obj->reso->sensitivity;
+        */
+	#endif
+		#if 1
+		#ifdef LSM6DS3_CALIB_HAL
+
+			acc[LSM6DS3_AXIS_X] =  acc[LSM6DS3_AXIS_X] - calib_acc_offset[LSM6DS3_AXIS_X];
+			acc[LSM6DS3_AXIS_Y] =  acc[LSM6DS3_AXIS_Y] - calib_acc_offset[LSM6DS3_AXIS_Y];
+			acc[LSM6DS3_AXIS_Z] =  acc[LSM6DS3_AXIS_Z] - calib_acc_offset[LSM6DS3_AXIS_Z];
+
+		#endif
+		#endif
 		sprintf(buf, "%04x %04x %04x", acc[LSM6DS3_AXIS_X], acc[LSM6DS3_AXIS_Y], acc[LSM6DS3_AXIS_Z]);
 	
 		if(atomic_read(&obj->trace) & ADX_TRC_IOCTL)//atomic_read(&obj->trace) & ADX_TRC_IOCTL
@@ -1328,6 +1363,7 @@ static int LSM6DS3_ReadAccData(struct i2c_client *client, char *buf, int bufsize
 	
 	return 0;
 }
+
 static int LSM6DS3_ReadAccRawData(struct i2c_client *client, int data[LSM6DS3_ACC_AXES_NUM])
 {
 	int err = 0;
@@ -1511,6 +1547,123 @@ static ssize_t show_status_value(struct device_driver *ddri, char *buf)
 	}
 	return len;    
 }
+/*----------------------------------------------------------------------------*/
+#ifdef LSM6DS3_CALIB_HAL
+static ssize_t show_cali_accx_value(struct device_driver *ddri, char *buf)
+{
+	struct i2c_client *client = lsm6ds3_i2c_client;
+        int data;
+
+	if(NULL == client)
+	{
+		GSE_ERR("i2c client is null!!\n");
+		return 0;
+	}
+	data = calib_acc_offset[LSM6DS3_AXIS_X];
+
+	return snprintf(buf, PAGE_SIZE, "%d \n", data);
+}
+
+/*----------------------------------------------------------------------------*/
+static ssize_t store_cali_accx_value(struct device_driver *ddri, const char *buf, size_t count)
+{
+	struct lsm6ds3_i2c_data *obj = obj_i2c_data;
+	int cali_x;
+	if (obj == NULL)
+	{
+		GSE_ERR("i2c_data obj is null!!\n");
+		return count;
+	}
+
+	if(1 == sscanf(buf, "%d", &cali_x))
+	{
+		calib_acc_offset[LSM6DS3_AXIS_X] = cali_x;
+	}
+	else
+	{
+		GSE_ERR("invalid content: '%s', length = %zu\n", buf, count);
+	}
+
+	return count;
+}
+
+static ssize_t show_cali_accy_value(struct device_driver *ddri, char *buf)
+{
+	struct i2c_client *client = lsm6ds3_i2c_client;
+        int data;
+
+	if(NULL == client)
+	{
+		GSE_ERR("i2c client is null!!\n");
+		return 0;
+	}
+	data = calib_acc_offset[LSM6DS3_AXIS_Y];
+
+	return snprintf(buf, PAGE_SIZE, "%d \n", data);
+}
+
+/*----------------------------------------------------------------------------*/
+static ssize_t store_cali_accy_value(struct device_driver *ddri, const char *buf, size_t count)
+{
+	struct lsm6ds3_i2c_data *obj = obj_i2c_data;
+	int cali_y;
+	if (obj == NULL)
+	{
+		GSE_ERR("i2c_data obj is null!!\n");
+		return count;
+	}
+
+	if(1 == sscanf(buf, "%d", &cali_y))
+	{
+		calib_acc_offset[LSM6DS3_AXIS_Y] = cali_y;
+	}
+	else
+	{
+		GSE_ERR("invalid content: '%s', length = %zu\n", buf, count);
+	}
+
+	return count;
+}
+
+static ssize_t show_cali_accz_value(struct device_driver *ddri, char *buf)
+{
+	struct i2c_client *client = lsm6ds3_i2c_client;
+        int data;
+
+	if(NULL == client)
+	{
+		GSE_ERR("i2c client is null!!\n");
+		return 0;
+	}
+	data = calib_acc_offset[LSM6DS3_AXIS_Z];
+
+	return snprintf(buf, PAGE_SIZE, "%d \n", data);
+}
+
+/*----------------------------------------------------------------------------*/
+static ssize_t store_cali_accz_value(struct device_driver *ddri, const char *buf, size_t count)
+{
+	struct lsm6ds3_i2c_data *obj = obj_i2c_data;
+	int cali_z;
+	if (obj == NULL)
+	{
+		GSE_ERR("i2c_data obj is null!!\n");
+		return count;
+	}
+
+	if(1 == sscanf(buf, "%d", &cali_z))
+	{
+		calib_acc_offset[LSM6DS3_AXIS_Z] = cali_z;
+	}
+	else
+	{
+		GSE_ERR("invalid content: '%s', length = %zu\n", buf, count);
+	}
+
+	return count;
+}
+
+#endif
 static ssize_t show_layout_value(struct device_driver *ddri, char *buf)
 {
 	struct lsm6ds3_i2c_data *data = obj_i2c_data;
@@ -1572,6 +1725,11 @@ static DRIVER_ATTR(trace,           (S_IRUGO | S_IWUSR), show_trace_value, store
 static DRIVER_ATTR(chipinit,      (S_IRUGO | S_IWUSR), show_chipinit_value, store_chipinit_value);
 static DRIVER_ATTR(status,               S_IRUGO, show_status_value,        NULL);
 static DRIVER_ATTR(layout,      (S_IRUGO | S_IWUSR), show_layout_value, store_layout_value);
+#ifdef LSM6DS3_CALIB_HAL
+static DRIVER_ATTR(gsensor_cali_val_x, S_IWUSR | S_IRUGO, show_cali_accx_value, store_cali_accx_value);
+static DRIVER_ATTR(gsensor_cali_val_y, S_IWUSR | S_IRUGO, show_cali_accy_value, store_cali_accy_value);
+static DRIVER_ATTR(gsensor_cali_val_z, S_IWUSR | S_IRUGO, show_cali_accz_value, store_cali_accz_value);
+#endif
 
 /*----------------------------------------------------------------------------*/
 static struct driver_attribute *LSM6DS3_attr_list[] = {
@@ -1581,6 +1739,11 @@ static struct driver_attribute *LSM6DS3_attr_list[] = {
 	&driver_attr_trace,        /*trace log*/
 	&driver_attr_status,  
 	&driver_attr_chipinit,
+	#ifdef LSM6DS3_CALIB_HAL
+	&driver_attr_gsensor_cali_val_x,
+	&driver_attr_gsensor_cali_val_y ,
+	&driver_attr_gsensor_cali_val_z ,
+	#endif
 	&driver_attr_layout,
 };
 /*----------------------------------------------------------------------------*/
