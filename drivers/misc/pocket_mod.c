@@ -81,7 +81,7 @@ int device_is_pocketed(void) {
 }
 
 int device_gesture_disabled(void) {
-
+		int check_response;
 
 	if (!(gesture_pocket_mod_switch))
 		return 0;
