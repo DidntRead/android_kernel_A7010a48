@@ -56,6 +56,9 @@
 //add for fix resume issue
 //#include <linux/earlysuspend.h>
 #include <linux/wakelock.h>
+#ifdef CONFIG_POCKETMOD
+#include <linux/pocket_mod.h>
+#endif
 //add for fix resume issue end
 
 /*lenovo-sw caoyi1 modify begin*/
@@ -5133,6 +5136,39 @@ static int alsps_local_init(void)
 	}
 	return 0;
 }
+/*----------------------------------------------------------------------------*/
+#ifdef CONFIG_POCKETMOD
+int EPL8801_pocket_detection_check(void)
+{
+	struct epl_sensor_priv *obj = epl_sensor_obj;
+	int ps_val;
+	bool enable_ps = test_bit(CMC_BIT_PS, &obj->enable);
+		if(!obj)
+		{
+			APS_ERR("obj is null!!\n");
+			return -1;
+		}
+		if (enable_ps) {
+			epl_sensor_read_ps_status(obj->client);
+			msleep(20);
+			ps_val = epl_sensor.ps.compare_low >> 3;
+			return ps_val;
+		} else {	
+                	set_bit(CMC_BIT_PS, &obj->enable);
+			#if PS_DYN_K_ONE
+                	ps_dyn_flag = true;
+			#endif
+			epl_sensor_update_mode(obj->client);
+			msleep(50);
+			epl_sensor_read_ps_status(obj->client);
+			msleep(20);
+			ps_val = epl_sensor.ps.compare_low >> 3;
+			clear_bit(CMC_BIT_PS, &obj->enable);
+                	epl_sensor_update_mode(obj->client);
+			return ps_val;
+		}
+}
+#endif
 /*----------------------------------------------------------------------------*/
 static int alsps_remove(void)
 {

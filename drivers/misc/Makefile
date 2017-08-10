@@ -65,3 +65,4 @@ obj-$(CONFIG_EFUSE_SBC_CHECK) += efusecheck/
 # lenovo-sw, chenzz3, add perftags driver, begin
 obj-$(CONFIG_LENOVO_PERFTAGS) += perftags.o
 # lenovo-sw, chenzz3, add perftags driver, end
+obj-$(CONFIG_POCKETMOD)		+= pocket_mod.o

@@ -48,6 +48,7 @@
 #include "fbconfig_kdebug.h"
 #include "primary_display.h"
 #include "disp_helper.h"
+#include "display_state.h"
 
 #include "ddp_hal.h"
 #include "ddp_dump.h"
