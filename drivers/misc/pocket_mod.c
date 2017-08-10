@@ -33,9 +33,7 @@
 #include "mediatek/video/mt6735/videox/display_state.h"
 #include <linux/pocket_mod.h>
 
-int is_screen_on;
-
-unsigned pocket_mod_switch = 1;
+unsigned pocket_mod_switch = 0;
 unsigned gesture_pocket_mod_switch = 1;
 
 

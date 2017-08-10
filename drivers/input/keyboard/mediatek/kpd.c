@@ -20,6 +20,7 @@
 #include <linux/of_address.h>
 #include <linux/of_irq.h>
 #include <linux/clk.h>
+#include <linux/pocket_mod.h>
 
 #define KPD_NAME	"mtk-kpd"
 //#define MTK_KP_WAKESOURCE	/* this is for auto set wake up source */
@@ -347,7 +348,8 @@ static void kpd_pwrkey_eint_handler(void)
 /*********************************************************************/
 #ifdef CONFIG_KPD_PWRKEY_USE_PMIC
 void kpd_pwrkey_pmic_handler(unsigned long pressed)
-{
+{	
+	if (device_is_pocketed() == 0) {
 	kpd_print("Power Key generate, pressed=%ld\n", pressed);
 	if (!kpd_input_dev) {
 		kpd_print("KPD input device not ready\n");
@@ -360,6 +362,7 @@ void kpd_pwrkey_pmic_handler(unsigned long pressed)
 	else /* keep the lock for extra 500ms after the button is released */
 		wake_lock_timeout(&pwrkey_lock, HZ/2);
 #endif
+	}
 }
 #endif
 
