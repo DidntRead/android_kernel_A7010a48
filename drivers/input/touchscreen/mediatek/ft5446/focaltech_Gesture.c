@@ -263,8 +263,8 @@ static void fts_check_gesture(struct input_dev *input_dev, int gesture_id)
 		break;
 	}
 	if (fts_gesture_letter != 0) {
-		if (get_tp_pocket_mode() == 1 && device_gesture_disabled() == 1) {
-		TPD_DEBUG("Gesture cancelled by pocket mode\n");
+		if (device_is_pocketed() == 1) {
+		TPD_DEBUG("Gesture cancelled by pocket mod\n");
 		} else {
 		input_report_key(tpd->dev, KEY_WAKEUP, 1);
 		input_sync(tpd->dev);

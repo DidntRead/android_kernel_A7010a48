@@ -34,10 +34,6 @@
 #include <linux/pocket_mod.h>
 
 unsigned pocket_mod_switch = 0;
-unsigned gesture_pocket_mod_switch = 1;
-
-
-
 
 static unsigned int pocket_mod_timeout = 600;
 static cputime64_t read_time_pre = 0;
@@ -80,30 +76,6 @@ int device_is_pocketed(void) {
 	return 0;
 }
 
-int device_gesture_disabled(void) {
-		int check_response;
-
-	if (!(gesture_pocket_mod_switch))
-		return 0;
-
-	if (sensor_check == NULL)
-		return 0;
-
-	if (!(primary_display_is_alive())) {
-		if (pocket_mod_switch){
-			check_response = sensor_check();
-
-			if (check_response == 1) {
-				return 0;
-			} else if (check_response == 0) {
-				return 1;
-			}
-		}
-	}
-
-	return 0;
-}
-
 static ssize_t pocket_mod_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
@@ -125,28 +97,6 @@ static ssize_t pocket_mod_set(struct device *dev,
 
 static DEVICE_ATTR(enable, (S_IWUSR|S_IRUGO),
 		pocket_mod_show, pocket_mod_set);
-
-static ssize_t gesture_pocket_mod_show(struct device *dev,
-				struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%u\n", gesture_pocket_mod_switch);
-}
-
-static ssize_t gesture_pocket_mod_set(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t size)
-{
-	unsigned int val = 0;
-
-	sscanf(buf, "%u\n", &val);
-
-	if ( ( val == 0 ) || ( val == 1 ) )
-		gesture_pocket_mod_switch = val;
-
-	return size;
-}
-
-static DEVICE_ATTR(gestures_enable, (S_IWUSR|S_IRUGO),
-		gesture_pocket_mod_show, gesture_pocket_mod_set);
 
 static ssize_t pocket_mod_timeout_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
@@ -172,7 +122,6 @@ static DEVICE_ATTR(timeout, (S_IWUSR|S_IRUGO),
 static struct attribute *pocket_mod_attributes[] =
 {
 	&dev_attr_enable.attr,
-	&dev_attr_gestures_enable.attr,
 	&dev_attr_timeout.attr,
 	NULL
 };

@@ -234,7 +234,6 @@ extern int epl_sensor_show_ps_status_for_tp() ;
 #endif
 #if  FTS_GESTRUE_EN
 static int fts_wakeup_flag = 0;
-static int pocket_mode = 1;
 static bool  fts_gesture_status = false;
 int fts_gesture_letter = 0 ;
 #endif
@@ -634,44 +633,15 @@ static ssize_t lenovo_gesture_wakeup_store(struct device *dev,
 	return count;
 }
 
-static ssize_t pocket_mode_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
-{
-	return snprintf(buf, PAGE_SIZE, "%d\n", pocket_mode);
-}
-
-static ssize_t pocket_mode_store(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t count)
-{
-	int status;
-	sscanf(buf, "%d", &status);
-	if (status > 1) {
-	return -EINVAL;
-	}
-	pocket_mode = status;
-	return count;
-}
-
-int get_tp_pocket_mode(void) {
-	return pocket_mode;
-}
-
-EXPORT_SYMBOL(get_tp_pocket_mode);
-
 static DEVICE_ATTR(tpd_suspend_status, 0664,
 		   lenovo_gesture_wakeup_show,
 		   lenovo_gesture_wakeup_store);
-
-static DEVICE_ATTR(tpd_pocket_mode, 0664,
-		   pocket_mode_show,
-		   pocket_mode_store);
 #endif
 
 static struct attribute *fts_touch_attrs[] = {
 	&dev_attr_touchpanel_info.attr,
 #if FTS_GESTRUE_EN
 	&dev_attr_tpd_suspend_status.attr,
-	&dev_attr_tpd_pocket_mode.attr,
 	&dev_attr_lenovo_tpd_info.attr,
 #endif
 #if FTS_GLOVE_EN
