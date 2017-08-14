@@ -111,9 +111,6 @@
 
 
 #define FTS_CTL_IIC
-#define SYSFS_DEBUG
-#define FTS_APK_DEBUG
-
 
 #if GTP_ESD_PROTECT
 #define TPD_ESD_CHECK_CIRCLE        	200
