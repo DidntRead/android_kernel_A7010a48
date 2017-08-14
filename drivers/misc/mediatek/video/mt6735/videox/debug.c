@@ -728,7 +728,7 @@ static void process_dbg_opt(const char *opt)
 			pr_err("DISP/%s: errno %d\n", __func__, ret);
 
 		DISPMSG("DDP: gTriggerDispMode=%d\n", gTriggerDispMode);
-	else if (0 == strncmp(opt, "cmmva_dprec", 11)) {
+	} else if (0 == strncmp(opt, "cmmva_dprec", 11)) {
 		dprec_handle_option(0x7);
 	} else if (0 == strncmp(opt, "cmmpa_dprec", 11)) {
 		dprec_handle_option(0x3);
