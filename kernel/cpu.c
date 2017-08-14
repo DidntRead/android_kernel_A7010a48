@@ -413,7 +413,7 @@ static int __ref _cpu_down(unsigned int cpu, int tasks_frozen)
 	 * Wait for the stop thread to go away.
 	 */
 	while (!idle_cpu(cpu))
-		cpu_relax();
+		cpu_read_relax();
 #ifdef CONFIG_MT_SCHED_MONITOR
 	mt_save_irq_counts(CPU_DOWN);
 #endif
