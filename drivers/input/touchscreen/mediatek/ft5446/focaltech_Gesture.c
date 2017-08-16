@@ -39,7 +39,6 @@
 #if FTS_GESTRUE_EN
 #include "ft_gesture_lib.h"
 #include <linux/pocket_mod.h>
-extern int get_tp_pocket_mode(void);
 
 /*******************************************************************************
 * Private constant and macro definitions using #define
@@ -92,7 +91,7 @@ unsigned short coordinate_y[150] = {0};
 /*******************************************************************************
 * Global variable or extern global variabls/functions
 *******************************************************************************/
-
+extern void set_vibrate(int value);
 
 /*******************************************************************************
 * Static function prototypes
@@ -266,6 +265,7 @@ static void fts_check_gesture(struct input_dev *input_dev, int gesture_id)
 		if (device_is_pocketed() == 1) {
 		TPD_DEBUG("Gesture cancelled by pocket mod\n");
 		} else {
+		set_vibrate(dt2w_vibration_time);
 		input_report_key(tpd->dev, KEY_WAKEUP, 1);
 		input_sync(tpd->dev);
 		input_report_key(tpd->dev, KEY_WAKEUP, 0);

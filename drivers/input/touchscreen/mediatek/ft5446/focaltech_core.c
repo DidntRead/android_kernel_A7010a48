@@ -131,6 +131,7 @@ u8 esd_running;
 #endif
 
 int tp_button_flag = 0;
+int dt2w_vibration_time = 80;
 /*
  *#ifdef FTS_CTL_IIC
  *	#include "focaltech_ctl.h"
@@ -633,6 +634,26 @@ static ssize_t lenovo_gesture_wakeup_store(struct device *dev,
 static DEVICE_ATTR(tpd_suspend_status, 0664,
 		   lenovo_gesture_wakeup_show,
 		   lenovo_gesture_wakeup_store);
+
+static ssize_t dt2w_vibration_time_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", dt2w_vibration_time);
+}
+
+static ssize_t dt2w_vibration_time_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int val;
+	sscanf(buf, "%d", &val);
+    	dt2w_vibration_time = val;
+	return count;
+}
+
+static DEVICE_ATTR(dt2w_vibration_time, 0664,
+		   dt2w_vibration_time_show,
+		   dt2w_vibration_time_store);
+
 #endif
 
 static struct attribute *fts_touch_attrs[] = {
@@ -649,6 +670,7 @@ static struct attribute *fts_touch_attrs[] = {
 	&dev_attr_fts_test_delay.attr,
 	&dev_attr_fts_test_interval.attr,
 #endif
+	&dev_attr_dt2w_vibration_time.attr,
 	NULL,
 };
 

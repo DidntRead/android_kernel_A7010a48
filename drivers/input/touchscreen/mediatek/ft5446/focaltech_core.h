@@ -320,6 +320,8 @@ typedef enum {
 extern  int  fts_gesture_letter ;
 #endif
 
+extern int dt2w_vibration_time;
+
 extern struct i2c_client *fts_i2c_client;
 extern struct input_dev *fts_input_dev;
 extern struct tpd_device *tpd;
