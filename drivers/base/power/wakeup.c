@@ -438,7 +438,7 @@ static bool wakeup_source_blocker(struct wakeup_source *ws)
 		if ((!enable_mtk_wlan_timeout_ws && !strncmp(ws->name, "WLAN timeout", wslen)) ||
 			(!enable_mtk_wlan_rx_ws && 
 		 		!strncmp(ws->name, "WLAN rx_thread", wslen)) ||
-			(!enable_enable_netlink_ws &&
+			(!enable_netlink_ws &&
 				!strncmp(ws->name, "NETLINK", wslen))) {
 			if (ws->active) {
 				wakeup_source_deactivate(ws);
