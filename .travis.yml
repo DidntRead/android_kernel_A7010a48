@@ -3,9 +3,10 @@ dist: trusty
 before_install:
 - git clone https://bitbucket.org/matthewdalex/aarch64-linux-android-5.x.git toolchain
 - export CROSS_COMPILE=$PWD/toolchain/bin/aarch64-linux-android-
+- sudo sh -c "echo 'deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse' > /etc/apt/sources.list.d/backports.list"
 - sudo apt-get -qq update
-- sudo apt-get install -y build-essential kernel-package libncurses5-dev bzip2 libfl-dev bc
-- sudo ln -s /usr/lib/x86_64-linux-gnu/libfl.so /usr/lib/libfl.so.2
+-sudo apt-get install -y libfl-dev/trusty-backports
+- sudo apt-get install -y build-essential kernel-package libncurses5-dev bzip2 bc
 - chmod +x build.sh
 install: true
 script:
