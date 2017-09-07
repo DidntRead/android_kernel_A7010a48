@@ -828,7 +828,7 @@ static int __match_id(u32 axi_id, int tbl_idx, u32 port_ID)
 		return 0;
 	}
 }
-
+#ifdef CONFIG_MTK_AEE_FEATURE
 static u32 __id2mst(u32 id)
 {
 
@@ -848,7 +848,7 @@ static u32 __id2mst(u32 id)
 
 	return MST_INVALID;
 }
-
+#endif
 static char *__id2name(u32 id)
 {
 
