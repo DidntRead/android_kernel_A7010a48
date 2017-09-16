@@ -244,7 +244,6 @@ static ssize_t navigation_event_set(struct device *dev,
     //pr_info("navigation_event_set, len:%d, buf:%s \n", count, buf);
 
     struct  fpc1020_data *fpc1020 = dev_get_drvdata(dev);
-    int error = 0;
     u64 val;
 
     if (kstrtou64(buf, 0, &val)) {
