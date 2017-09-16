@@ -507,7 +507,7 @@ static INT32 stp_sdio_do_own_clr(INT32 wait)
 			break;
 		}
 		STPSDIO_DBG_FUNC("firmware ownback is no polled, wait for (%d us) and retry\n", delay_us);
-		udelay(delay_us);
+		usleep_range(delay_us,delay_us);
 		if (0 == (retry - 1)%40)
 			STPSDIO_ERR_FUNC("own back failed in %d us, something might goes wrong\n", 40*delay_us);
 
