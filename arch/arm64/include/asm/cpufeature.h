@@ -29,6 +29,8 @@
 
 #ifndef __ASSEMBLY__
 
+#include <linux/kernel.h>
+
 extern DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
 
 static inline bool cpu_have_feature(unsigned int num)
