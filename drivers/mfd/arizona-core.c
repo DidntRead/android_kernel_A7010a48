@@ -2059,15 +2059,16 @@ int arizona_dev_init(struct arizona *arizona)
 	case CS47L24:
 		for (i = 0; i < ARRAY_SIZE(arizona->pdata.gpio_defaults); i++) {
 			if (!arizona->pdata.gpio_defaults[i])
-			continue;
+				continue;
+			
 			regmap_write(arizona->regmap, ARIZONA_GPIO1_CTRL + i,
 				     arizona->pdata.gpio_defaults[i]);
 		}
 		break;
 	default:
-	for (i = 0; i < ARRAY_SIZE(arizona->pdata.gpio_defaults); i++) {
-		if (!arizona->pdata.gpio_defaults[i])
-		continue;
+		for (i = 0; i < ARRAY_SIZE(arizona->pdata.gpio_defaults); i++) {
+			if (!arizona->pdata.gpio_defaults[i])
+				continue;
 
 			regmap_write(arizona->regmap, CLEARWATER_GPIO1_CTRL_1 + i,
 			     arizona->pdata.gpio_defaults[i]);
