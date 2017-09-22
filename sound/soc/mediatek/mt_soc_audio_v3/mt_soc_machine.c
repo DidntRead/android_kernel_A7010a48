@@ -888,7 +888,7 @@ static const struct file_operations mtaudio_ana_debug_ops = {
 #if defined(CONFIG_SND_SOC_FLORIDA)
 #define GPIO_ARIZONA_EXT_SPKEN_PIN 90
 
-static const char *const spk_function[] = {"Off", "On"};
+static const char *spk_function[] = {"Off", "On"};
 static const struct soc_enum k5_snd_enum[] = {
 	SOC_ENUM_SINGLE_EXT(2, spk_function),
 };
@@ -1883,7 +1883,7 @@ static struct snd_soc_dai_link mt_soc_dai_common[] = {
 #endif
 };
 
-static const char const *I2S_low_jittermode[] = { "Off", "On" };
+static const char *I2S_low_jittermode[] = { "Off", "On" };
 
 static const struct soc_enum mt_soc_machine_enum[] = {
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(I2S_low_jittermode), I2S_low_jittermode),
