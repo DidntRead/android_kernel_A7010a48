@@ -124,8 +124,6 @@ EXPORT_SYMBOL_GPL(arizona_clk32k_enable);
 
 int arizona_clk32k_disable(struct arizona *arizona)
 {
-	int ret = 0;
-
 	mutex_lock(&arizona->clk_lock);
 
 	BUG_ON(arizona->clk32k_ref <= 0);
@@ -145,7 +143,7 @@ int arizona_clk32k_disable(struct arizona *arizona)
 
 	mutex_unlock(&arizona->clk_lock);
 
-	return ret;
+	return 0;
 }
 EXPORT_SYMBOL_GPL(arizona_clk32k_disable);
 
@@ -2059,9 +2057,9 @@ int arizona_dev_init(struct arizona *arizona)
 	case WM1814:
 	case WM1831:
 	case CS47L24:
-		for (i = 0; i < ARIZONA_MAX_GPIO_REGS; i++) {
+		for (i = 0; i < ARRAY_SIZE(arizona->pdata.gpio_defaults); i++) {
 			if (!arizona->pdata.gpio_defaults[i])
-				continue;
+			continue;
 			regmap_write(arizona->regmap, ARIZONA_GPIO1_CTRL + i,
 				     arizona->pdata.gpio_defaults[i]);
 		}
@@ -2069,7 +2067,7 @@ int arizona_dev_init(struct arizona *arizona)
 	default:
 	for (i = 0; i < ARRAY_SIZE(arizona->pdata.gpio_defaults); i++) {
 		if (!arizona->pdata.gpio_defaults[i])
-			continue;
+		continue;
 
 			regmap_write(arizona->regmap, CLEARWATER_GPIO1_CTRL_1 + i,
 			     arizona->pdata.gpio_defaults[i]);
