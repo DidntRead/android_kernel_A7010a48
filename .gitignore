@@ -106,3 +106,5 @@ anykernel2/DarknessKernel.zip
 anykernel2/Image.gz-dtb
 
 arch/arm64/boot/dts/cust.dtsi
+# fetched Android config fragments
+android/configs/android-*.cfg
