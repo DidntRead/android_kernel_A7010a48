@@ -306,6 +306,7 @@
 
 
 #define AS_FAULTSTATUS_ACCESS_TYPE_MASK                  (0x3<<8)
+#define AS_FAULTSTATUS_ACCESS_TYPE_ATOMIC                (0x0<<8)
 #define AS_FAULTSTATUS_ACCESS_TYPE_EX                    (0x1<<8)
 #define AS_FAULTSTATUS_ACCESS_TYPE_READ                  (0x2<<8)
 #define AS_FAULTSTATUS_ACCESS_TYPE_WRITE                 (0x3<<8)

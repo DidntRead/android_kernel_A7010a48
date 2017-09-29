@@ -1445,7 +1445,12 @@ static const char *access_type_name(struct kbase_device *kbdev,
 		u32 fault_status)
 {
 	switch (fault_status & AS_FAULTSTATUS_ACCESS_TYPE_MASK) {
+	case AS_FAULTSTATUS_ACCESS_TYPE_ATOMIC:
+#ifdef CONFIG_MALI_GPU_MMU_AARCH64
+		return "ATOMIC";
+#else
 		return "UNKNOWN";
+#endif /* CONFIG_MALI_GPU_MMU_AARCH64 */
 	case AS_FAULTSTATUS_ACCESS_TYPE_READ:
 		return "READ";
 	case AS_FAULTSTATUS_ACCESS_TYPE_WRITE:
