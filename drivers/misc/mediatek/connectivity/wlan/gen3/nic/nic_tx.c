@@ -1213,8 +1213,6 @@ BOOLEAN nicTxReleaseResource(IN P_ADAPTER_T prAdapter, IN UINT_16 *au2TxRlsCnt)
 		if (au2TxRlsCnt[TC4_INDEX] != 0)
 			wlanTraceReleaseTcRes(prAdapter, au2TxRlsCnt, prTcqStatus->au2FreeBufferCount[TC4_INDEX]);
 
-		for (i = TC0_INDEX; i < TC_NUM; i++)
-			prQM->au4QmTcResourceBackCounter[i] += au2FreeTcResource[i];
 		KAL_RELEASE_SPIN_LOCK(prAdapter, SPIN_LOCK_TX_RESOURCE);
 		bStatus = TRUE;
 	}
