@@ -266,6 +266,7 @@ static struct completion report_point_complete;
 
 #endif
 static bool  is_fw_upgrate = false;
+bool keypad_mode;
 static bool  is_turnoff_checkesd = false;
 /*
  *add by lixh10 end
@@ -656,11 +657,41 @@ static DEVICE_ATTR(dt2w_vibration_time, 0664,
 
 #endif
 
+static ssize_t ft5x46_keypad_mode_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	int count;
+	char c = keypad_mode ? '0' : '1';
+
+	count = sprintf(buf, "%c\n", c);
+
+	return count;
+}
+
+static ssize_t ft5x46_keypad_mode_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	int i;
+
+	if (sscanf(buf, "%u", &i) == 1 && i < 2) {
+		keypad_mode = (i == 0);
+		return count;
+	} else {
+		dev_dbg(dev, "keypad_mode write error\n");
+		return -EINVAL;
+	}
+}
+
+static DEVICE_ATTR(keypad_mode, S_IWUSR | S_IRUSR, ft5x46_keypad_mode_show,
+		   ft5x46_keypad_mode_store);
+
 static struct attribute *fts_touch_attrs[] = {
 	&dev_attr_touchpanel_info.attr,
+	&dev_attr_keypad_mode.attr,
 #if FTS_GESTRUE_EN
 	&dev_attr_tpd_suspend_status.attr,
 	&dev_attr_lenovo_tpd_info.attr,
+	&dev_attr_dt2w_vibration_time.attr,
 #endif
 #if FTS_GLOVE_EN
 	&dev_attr_tpd_glove_status.attr,
@@ -670,7 +701,6 @@ static struct attribute *fts_touch_attrs[] = {
 	&dev_attr_fts_test_delay.attr,
 	&dev_attr_fts_test_interval.attr,
 #endif
-	&dev_attr_dt2w_vibration_time.attr,
 	NULL,
 };
 
@@ -1327,6 +1357,11 @@ static int fts_read_Touchdata(struct ts_event *data)//(struct ts_event *pinfo)
 			(buf[FTS_TOUCH_XY_POS + FTS_TOUCH_STEP * i]);/*cannot constant value */
 		data->area[i] =
 			(buf[FTS_TOUCH_MISC + FTS_TOUCH_STEP * i]) >> 4;
+
+		if (data->au16_y[i] == 2100 && keypad_mode) {
+			break;
+		}
+
 		if ((data->au8_touch_event[i] == 0 || data->au8_touch_event[i] == 2) && ((data->touch_point_num == 0) || (data->pressure[i] == 0 && data->area[i] == 0)))
 			return ret;
 		/*
