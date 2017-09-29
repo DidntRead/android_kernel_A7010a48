@@ -2849,20 +2849,6 @@ bailout:
 			break;
 		}
 	}
-
-#if 0/* Sarah */
-	wlanCfgSetSwCtrl(prGlueInfo->prAdapter);
-
-	wlanCfgSetChip(prGlueInfo->prAdapter);
-
-	wlanCfgSetCountryCode(prGlueInfo->prAdapter);
-
-#if (CFG_MET_PACKET_TRACE_SUPPORT == 1)
-	DBGLOG(INIT, TRACE, "init MET procfs...\n");
-	i4Status = kalMetInitProcfs(prGlueInfo);
-	if (i4Status < 0)
-		DBGLOG(INIT, ERROR, "wlanProbe: init MET procfs failed\n");
-#endif
 	return i4Status;
 }				/* end of wlanProbe() */
 
