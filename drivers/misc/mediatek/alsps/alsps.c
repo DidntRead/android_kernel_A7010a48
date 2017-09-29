@@ -210,7 +210,6 @@ static int als_real_enable(int enable)
 					}
 				}
 			}
-		}
 		ALSPS_LOG("alsps real enable\n");
 	}
 
