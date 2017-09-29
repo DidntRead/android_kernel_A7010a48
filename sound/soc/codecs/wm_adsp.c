@@ -2061,7 +2061,6 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
 	int err, pos, blocks, type, offset, reg;
 	char *file;
 	struct wm_adsp_buf *buf;
-	int tmp;
 #ifdef PWM_SPI_DEBUG
     u64 t0,t1;
 #endif
