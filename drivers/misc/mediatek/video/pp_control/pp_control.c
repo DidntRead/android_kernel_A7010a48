@@ -11,8 +11,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * Please preserve this licence and driver name if you implement this 
+ *
+ * Please preserve this licence and driver name if you implement this
  * anywhere else.
  *
  */
@@ -31,14 +31,14 @@
 #define pp_control_version 1
 #define pp_control_subversion 6
 
-static void update_pp(struct pp_data *pp_data) {
-	//TODO Add controls for mediatek`s color calibration
+static void update_pp(struct pp_data *pp_data)
+{
 	int i, gammutR, gammutG, gammutB;
 	unsigned char h_series[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	unsigned int u4Temp = 0;
 	int index = 0;
 	DISP_GAMMA_LUT_T *gamma;
-	
+
 	if (pp_data->enable) {
 		_color_reg_mask(NULL, DISP_COLOR_CFG_MAIN + offset, (0 << 7), 0x00000080);
 		_color_reg_set(NULL, DISP_COLOR_START + offset, 0x00000001);
@@ -53,18 +53,18 @@ static void update_pp(struct pp_data *pp_data) {
 
 
 	if (pp_data->red < pp_data->minimum) {
-	pp_data->red = pp_data->minimum;	
+	pp_data->red = pp_data->minimum;
 	}
 	if (pp_data->green < pp_data->minimum) {
-	pp_data->green = pp_data->minimum;	
+	pp_data->green = pp_data->minimum;
 	}
 	if (pp_data->blue < pp_data->minimum) {
-	pp_data->blue = pp_data->minimum;	
+	pp_data->blue = pp_data->minimum;
 	}
 
 	gamma = kzalloc(sizeof(DISP_GAMMA_LUT_T), GFP_KERNEL);
 	gamma->hw_id = 0;
-	
+
 	if (pp_data->enable) {
 	for (i = 0; i < 512; i++) {
 		gammutR = i * pp_data->red / PROGRESSION_SCALE;
@@ -83,29 +83,15 @@ static void update_pp(struct pp_data *pp_data) {
 	}
 
 	primary_display_user_cmd(DISP_IOCTL_SET_GAMMALUT, (unsigned long)gamma);
-	kfree(gamma);	
+	kfree(gamma);
 	_color_reg_set(NULL, DISP_COLOR_G_PIC_ADJ_MAIN_2,
 	pp_data->sat);
 	_color_reg_set(NULL, DISP_COLOR_G_PIC_ADJ_MAIN_1,
-	( pp_data->brightness << 16 ) | pp_data->cont);
-	/*	
-	for (index = 0; index < 3; index++) {
-		h_series[index] = pp_data->hue_purple;
-	}
-	for (index = 3; index < 11; index++) {
-		h_series[index] = pp_data->hue_skin;
-	}
-	for (index = 11; index < 17; index++) {
-		h_series[index] = pp_data->hue_grass;
-	}
-	for (index = 17; index < 20; index++) {
-		h_series[index] = pp_data->hue_sky;
-	}
-	*/
+	(pp_data->brightness << 16) | pp_data->cont);
 	for (index = 0; index < 20; index++) {
 		h_series[index] = pp_data->hue;
 	}
-		
+
 	for (index = 0; index < 5; index++) {
 		u4Temp = (h_series[4 * index]) +
 		    (h_series[4 * index + 1] << 8) +
@@ -115,7 +101,7 @@ static void update_pp(struct pp_data *pp_data) {
 	if (pp_data->enable) {
 	color_trigger_refresh(DISP_MODULE_COLOR0);
 	}
-	
+
 }
 
 static ssize_t min_store(struct device *dev,
@@ -123,10 +109,9 @@ static ssize_t min_store(struct device *dev,
 {
 	int min, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
-	if (primary_display_is_sleepd()) {
+
+	if (primary_display_is_sleepd())
 	return -EINVAL;
-	}
 
 	ret = sscanf(buf, "%d", &min);
 	if ((!ret) || (min < 1 || min > 2000))
@@ -150,10 +135,9 @@ static ssize_t green_store(struct device *dev,
 {
 	int green, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
+
+	if (primary_display_is_sleepd())
+		return -EINVAL;
 
 	ret = sscanf(buf, "%d", &green);
 	if ((!ret) || (green > 2000))
@@ -177,10 +161,9 @@ static ssize_t blue_store(struct device *dev,
 {
 	int blue, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
+
+	if (primary_display_is_sleepd())
+		return -EINVAL;
 
 	ret = sscanf(buf, "%d", &blue);
 	if ((!ret) || (blue > 2000))
@@ -204,7 +187,7 @@ static ssize_t red_store(struct device *dev,
 {
 	int red, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
+
 	if (primary_display_is_sleepd()) {
 	return -EINVAL;
 	}
@@ -231,10 +214,9 @@ static ssize_t enable_store(struct device *dev,
 {
 	int enable, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
+
+	if (primary_display_is_sleepd())
+		return -EINVAL;
 
 	ret = sscanf(buf, "%d", &enable);
 	if ((!ret) || (enable != 0 && enable != 1) ||
@@ -259,13 +241,13 @@ static ssize_t sat_store(struct device *dev,
 {
 	int sat, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
+
 	if (primary_display_is_sleepd()) {
 	return -EINVAL;
 	}
 
 	ret = sscanf(buf, "%d", &sat);
-	
+
 	pp_data->sat = sat;
 	update_pp(pp_data);
 	return count;
@@ -284,13 +266,13 @@ static ssize_t cont_store(struct device *dev,
 {
 	int cont, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
+
 	if (primary_display_is_sleepd()) {
 	return -EINVAL;
 	}
 
 	ret = sscanf(buf, "%d", &cont);
-	
+
 	pp_data->cont = cont;
 	update_pp(pp_data);
 	return count;
@@ -303,49 +285,46 @@ static ssize_t cont_show(struct device *dev,
 	return scnprintf(buf, PAGE_SIZE, "%d\n", pp_data->cont);
 }
 
-static ssize_t brig_store(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t count)
+static ssize_t brig_store(struct device *dev, struct device_attribute *attr,
+			  const char *buf, size_t count)
 {
 	int brig, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
+
+	if (primary_display_is_sleepd())
+		return -EINVAL;
 
 	ret = sscanf(buf, "%d", &brig);
-	
+
 	pp_data->brightness = brig;
 	update_pp(pp_data);
 	return count;
 }
 
-static ssize_t brig_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
+static ssize_t brig_show(struct device *dev, struct device_attribute *attr,
+			 char *buf)
 {
 	struct pp_data *pp_data = dev_get_drvdata(dev);
+
 	return scnprintf(buf, PAGE_SIZE, "%d\n", pp_data->brightness);
 }
 
 static ssize_t hue_show(struct device *dev, struct device_attribute *attr,
-								char *buf)
+			char *buf)
 {
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-	//return scnprintf(buf, PAGE_SIZE, "%d %d %d %d\n", pp_data->hue_purple, pp_data->hue_skin, pp_data->hue_grass, pp_data->hue_sky);
+
 	return scnprintf(buf, PAGE_SIZE, "%d\n", pp_data->hue);
 }
 
 static ssize_t hue_store(struct device *dev, struct device_attribute *attr,
-const char *buf, size_t count) {
-	//int purp, skin, grass, sky, ret;
-	int hue, ret;	
+			 const char *buf, size_t count) {
+	int hue, ret;
 	struct pp_data *pp_data = dev_get_drvdata(dev);
-		
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
 
-	//ret = sscanf(buf, "%d %d %d %d", &purp, &skin, &grass, &sky);
+	if (primary_display_is_sleepd())
+		return -EINVAL;
+
 	ret = sscanf(buf, "%d", &hue);
 
 	pp_data->hue = hue;
@@ -353,30 +332,29 @@ const char *buf, size_t count) {
 	return count;
 }
 
-static ssize_t invert_store(struct device *dev,
-		struct device_attribute *attr, const char *buf, size_t count)
+static ssize_t invert_store(struct device *dev, struct device_attribute *attr,
+			    const char *buf, size_t count)
 {
 	int invert, ret;
+
 	extern void lcm_set_inversemode(bool enable);
 	struct pp_data *pp_data = dev_get_drvdata(dev);
 
-	if (primary_display_is_sleepd()) {
-	return -EINVAL;
-	}
+	if (primary_display_is_sleepd())
+		return -EINVAL;
 
 	ret = sscanf(buf, "%d", &invert);
-	if ( !ret || (invert != 0 && invert != 1) ||
-		pp_data->invert == invert)
+	if (!ret || (invert != 0 && invert != 1) ||
+	    pp_data->invert == invert)
 		return -EINVAL;
 
 	pp_data->invert = invert;
-	lcm_set_inversemode(invert); //TODO Find a universal way to do this
-	//update_pp(pp_data);
+	lcm_set_inversemode(invert);
 	return count;
 }
 
 static ssize_t invert_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
+			   struct device_attribute *attr, char *buf)
 {
 	struct pp_data *pp_data = dev_get_drvdata(dev);
 
@@ -384,9 +362,10 @@ static ssize_t invert_show(struct device *dev,
 }
 
 static ssize_t version_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
+			    struct device_attribute *attr, char *buf)
 {
-	return scnprintf(buf, PAGE_SIZE, "v%d_%d\n", pp_control_version, pp_control_subversion);
+	return scnprintf(buf, PAGE_SIZE, "v%d_%d\n",
+			 pp_control_version, pp_control_subversion);
 }
 
 static DEVICE_ATTR(hue, S_IWUSR | S_IRUGO, hue_show, hue_store);
@@ -398,9 +377,8 @@ static DEVICE_ATTR(brightness, S_IWUSR | S_IRUGO, brig_show, brig_store);
 static DEVICE_ATTR(cont, S_IWUSR | S_IRUGO, cont_show, cont_store);
 static DEVICE_ATTR(min, S_IWUSR | S_IRUGO, min_show, min_store);
 static DEVICE_ATTR(version, S_IWUSR | S_IRUGO, version_show, NULL);
-static DEVICE_ATTR(enable, S_IWUSR | S_IRUGO, enable_show,enable_store);
-static DEVICE_ATTR(invert, S_IWUSR | S_IRUGO, invert_show,invert_store);
-
+static DEVICE_ATTR(enable, S_IWUSR | S_IRUGO, enable_show, enable_store);
+static DEVICE_ATTR(invert, S_IWUSR | S_IRUGO, invert_show, invert_store);
 
 static int pp_control_probe(struct platform_device *pdev)
 {
@@ -424,12 +402,7 @@ static int pp_control_probe(struct platform_device *pdev)
 	pp_data->sat = DISP_REG_GET(DISP_COLOR_G_PIC_ADJ_MAIN_2);
 	pp_data->cont = 128;
 	pp_data->brightness = 1024;
-	/*	
-	pp_data->hue_purple = 128;
-	pp_data->hue_skin = 128;
-	pp_data->hue_grass = 128;
-	pp_data->hue_sky = 128;
-	*/
+
 	pp_data->hue = 128;
 	pp_data->invert = 0;
 
@@ -444,8 +417,6 @@ static int pp_control_probe(struct platform_device *pdev)
 	ret |= device_create_file(&pdev->dev, &dev_attr_green);
 	ret |= device_create_file(&pdev->dev, &dev_attr_red);
 	ret |= device_create_file(&pdev->dev, &dev_attr_invert);
-
-
 
 	if (ret) {
 		pr_err("%s: unable to create sysfs entries\n", __func__);
@@ -468,10 +439,6 @@ static int pp_control_remove(struct platform_device *pdev)
 	device_remove_file(&pdev->dev, &dev_attr_green);
 	device_remove_file(&pdev->dev, &dev_attr_red);
 	device_remove_file(&pdev->dev, &dev_attr_invert);
-
-
-
-
 
 	return 0;
 }
@@ -503,7 +470,7 @@ static int __init pp_control_init(void)
 
 static void __exit pp_control_exit(void)
 {
-	platform_driver_unregister(&pp_control_driver);	
+	platform_driver_unregister(&pp_control_driver);
 	platform_device_unregister(&pp_control_device);
 }
 

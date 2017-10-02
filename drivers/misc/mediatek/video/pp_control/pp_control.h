@@ -11,8 +11,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * Please preserve this licence and driver name if you implement this 
+ *
+ * Please preserve this licence and driver name if you implement this
  * anywhere else.
  *
  */
@@ -29,7 +29,6 @@
 #define PROGRESSION_SCALE 1000
 #define offset (0)
 
-
 struct pp_data {
 	int red;
 	int green;
@@ -38,17 +37,13 @@ struct pp_data {
 	int enable;
 	int invert;
 	int sat;
-	/*	
-	int hue_purple;
-	int hue_skin;
-	int hue_grass;
-	int hue_sky;
-	*/
-	int hue;	
+	int hue;
 	int cont;
 	int brightness;
 };
 
 extern void color_trigger_refresh(DISP_MODULE_ENUM module);
-extern void _color_reg_set(void *__cmdq, unsigned long addr, unsigned int value);
-extern void _color_reg_mask(void *__cmdq, unsigned long addr, unsigned int value, unsigned int mask);
+extern void _color_reg_set(void *__cmdq, unsigned long addr,
+			   unsigned int value);
+extern void _color_reg_mask(void *__cmdq, unsigned long addr,
+			    unsigned int value, unsigned int mask);
