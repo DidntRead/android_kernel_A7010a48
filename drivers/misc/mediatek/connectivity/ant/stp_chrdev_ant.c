@@ -20,9 +20,9 @@ MODULE_LICENSE("Dual BSD/GPL");
 #define ANT_DRIVER_NAME "mtk_stp_ANT_chrdev"
 #define ANT_DEV_MAJOR 197	/* never used number */
 static PINT8 ANT_PATCH_FILE_NAME;
-static PINT8 ANT_PATCH_FILE_NAME_COMBO_V1 = "/system/etc/firmware/ANT_RAM_CODE_E1.BIN";
-static PINT8 ANT_PATCH_FILE_NAME_COMBO_V2 = "/system/etc/firmware/ANT_RAM_CODE_E2.BIN";
-static PINT8 ANT_PATCH_FILE_NAME_ADDIE_V1 = "/system/etc/firmware/ANT_RAM_CODE_CONN_V1.BIN";
+static PINT8 ANT_PATCH_FILE_NAME_COMBO_V1 = "/system/vendor/firmware/ANT_RAM_CODE_E1.BIN";
+static PINT8 ANT_PATCH_FILE_NAME_COMBO_V2 = "/system/vendor/firmware/ANT_RAM_CODE_E2.BIN";
+static PINT8 ANT_PATCH_FILE_NAME_ADDIE_V1 = "/system/vendor/firmware/ANT_RAM_CODE_CONN_V1.BIN";
 
 typedef enum _ENUM_ANT_RAM_CODE_T {
 	ANT_RAM_CODE_START = 0,
