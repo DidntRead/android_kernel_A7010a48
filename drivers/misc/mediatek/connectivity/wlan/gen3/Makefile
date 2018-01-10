@@ -58,6 +58,10 @@ else
     ccflags-y += -DCFG_MET_PACKET_TRACE_SUPPORT=0
 endif
 
+ifeq ($(CONFIG_MTK_AOSP_TETHERING), y)
+    ccflags-y += -DMTK_AOSP_TETHERING
+endif
+
 ccflags-y += -D_HIF_SDIO=1
 
 ccflags-y += -DDBG=0

@@ -939,6 +939,9 @@ const UINT_32 mtk_cipher_suites[5] = {
 /*********************************************************/
 
 #define NIC_INF_NAME    "wlan%d"	/* interface name */
+#if defined(MTK_AOSP_TETHERING)
+#define NIC_INF_NAME_IN_AP_MODE  "legacy%d"
+#endif
 
 #if CFG_SUPPORT_SNIFFER
 #define NIC_MONITOR_INF_NAME	"radiotap%d"
@@ -2212,9 +2215,20 @@ static struct wireless_dev *wlanNetCreate(PVOID pvData)
 	kalMemZero(prGlueInfo, sizeof(GLUE_INFO_T));
 	/* 4 <3> Initial Glue structure */
 	/* 4 <3.1> create net device */
+	#if defined(MTK_AOSP_TETHERING)
+	if (wlan_if_changed)
+	prGlueInfo->prDevHandler =
+	     alloc_netdev_mq(sizeof(NETDEV_PRIVATE_GLUE_INFO), NIC_INF_NAME_IN_AP_MODE,
+							   NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+	else
+	prGlueInfo->prDevHandler =
+	     alloc_netdev_mq(sizeof(NETDEV_PRIVATE_GLUE_INFO), NIC_INF_NAME,
+							   NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+	#else
 	prGlueInfo->prDevHandler =
 	    alloc_netdev_mq(sizeof(NETDEV_PRIVATE_GLUE_INFO), NIC_INF_NAME,
 				NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+	#endif
 
 	DBGLOG(INIT, INFO, "net_device prDev(0x%p) allocated\n", prGlueInfo->prDevHandler);
 	if (!prGlueInfo->prDevHandler) {

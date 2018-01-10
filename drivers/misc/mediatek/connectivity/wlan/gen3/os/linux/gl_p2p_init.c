@@ -27,7 +27,11 @@
 */
 
 #define P2P_MODE_INF_NAME "p2p%d"
-#define AP_MODE_INF_NAME "ap%d"
+#if defined(MTK_AOSP_TETHERING)
+#define AP_MODE_INF_NAME "wlan%d"
+#else
+#define AP_MODE_INF_NAME  "ap%d"
+#endif
 /* #define MAX_INF_NAME_LEN 15 */
 /* #define MIN_INF_NAME_LEN 1 */
 

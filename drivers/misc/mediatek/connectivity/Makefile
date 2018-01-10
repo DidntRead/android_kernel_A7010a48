@@ -7,6 +7,10 @@ ifeq ($(CONFIG_ARM64), y)
 subdir-ccflags-y += -D CONFIG_MTK_WCN_ARM64
 endif
 
+ifeq ($(CONFIG_MTK_AOSP_TETHERING), y)
+    ccflags-y += -DMTK_AOSP_TETHERING
+endif
+
 ifeq ($(CONFIG_MTK_CONN_LTE_IDC_SUPPORT),y)
     subdir-ccflags-y += -D WMT_IDC_SUPPORT=1
 else
