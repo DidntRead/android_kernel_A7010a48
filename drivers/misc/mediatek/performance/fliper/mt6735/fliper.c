@@ -319,7 +319,9 @@ static struct notifier_block fliper_fb_notif = {
 static int __init init_fliper(void)
 {
 	struct proc_dir_entry *pe;
+	#ifdef CONFIG_PM_AUTOSLEEP
 	int ret = 0;
+	#endif
 
 	pe = proc_create("fliper", 0664, NULL, &mt_fliper_fops);
 	if (!pe)

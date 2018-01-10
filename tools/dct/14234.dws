@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dct_cfg>
+    <general chip="MT6753">
+        <proj>greatproj</proj>
+        <module name="adc">
+            <count>6</count>
+        </module>
+        <module name="clk">
+            <count>4</count>
+        </module>
+        <module name="eint">
+            <count>213</count>
+        </module>
+        <module name="gpio">
+            <count>204</count>
+            <gpio0>
+                <eint_mode>false</eint_mode>
+                <def_mode>1</def_mode>
+                <mode_arr>11000000</mode_arr>
+                <inpull_en>true</inpull_en>
+                <inpull_selhigh>false</inpull_selhigh>
+                <def_dir>IN</def_dir>
+                <in>true</in>
+                <out>false</out>
+                <out_high>false</out_high>
+                <varName0></varName0>
+                <varName1></varName1>
+                <varName2></varName2>
+                <smt>false</smt>
+            </gpio0>
+            <gpio5>
+                <eint_mode>false</eint_mode>
+                <def_mode>0</def_mode>
+                <mode_arr>11010010</mode_arr>
+                <inpull_en>false</inpull_en>
+                <inpull_selhigh>true</inpull_selhigh>
+                <def_dir>IN</def_dir>
+                <in>true</in>
+                <out>false</out>
+                <out_high>false</out_high>
+                <varName0>GPIO_SDHC_EINT_PIN</varName0>
+                <varName1></varName1>
+                <varName2>GPIO_52_USB_SW1</varName2>
+                <smt>false</smt>
+            </gpio5>
+        </module>
+        <module name="i2c">
+            <count>32</count>
+            <i2c_bus0>
+                <speed_kbps>400</speed_kbps>
+                <pullPushEn>false</pullPushEn>
+            </i2c_bus0>
+            <i2c_bus1>
+                <speed_kbps>400</speed_kbps>
+                <pullPushEn>false</pullPushEn>
+            </i2c_bus1>
+            <i2c_bus2>
+                <speed_kbps>400</speed_kbps>
+                <pullPushEn>false</pullPushEn>
+            </i2c_bus2>
+            <i2c_bus3>
+                <speed_kbps>400</speed_kbps>
+                <pullPushEn>false</pullPushEn>
+            </i2c_bus3>
+            <i2c_bus4>
+                <speed_kbps>400</speed_kbps>
+                <pullPushEn>false</pullPushEn>
+            </i2c_bus4>
+        </module>
+        <module name="md1_eint">
+            <count>4</count>
+        </module>
+        <module name="pmic">
+            <chip></chip>
+            <count>0</count>
+        </module>
+        <module name="kpd">
+            <row>8</row>
+            <column>9</column>
+            <keyMatrix>NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC
+				NC NC NC NC NC NC NC NC NC</keyMatrix>
+            <downloadKey>NC NC NC</downloadKey>
+            <modeKey>NC NC NC</modeKey>
+            <pwrKeyEint_gpioNum>0</pwrKeyEint_gpioNum>
+            <pwrKeyUtility>ENDCALL</pwrKeyUtility>
+            <home_key></home_key>
+            <bPwrKeyUseEint>false</bPwrKeyUseEint>
+            <bPwrKeyGpioDinHigh>false</bPwrKeyGpioDinHigh>
+            <pressPeriod>1024</pressPeriod>
+            <keyType>NORMAL_TYPE</keyType>
+        </module>
+        <module name="power">
+            <count>0</count>
+        </module>
+    </general>
+</dct_cfg>
