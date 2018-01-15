@@ -58,10 +58,8 @@ enum {
 static INT32 wlan_mode = WLAN_MODE_HALT;
 static INT32 powered;
 static INT8 *ifname = WLAN_IFACE_NAME;
-#if defined(MTK_AOSP_TETHERING)
 volatile INT32 wlan_if_changed = 0;
 EXPORT_SYMBOL(wlan_if_changed);
-#endif
 
 typedef enum _ENUM_RESET_STATUS_T {
 	RESET_FAIL,
