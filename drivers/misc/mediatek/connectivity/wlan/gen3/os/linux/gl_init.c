@@ -1943,7 +1943,7 @@ VOID wlanUpdateChannelTable(P_GLUE_INFO_T prGlueInfo)
 
 	/* 2. Get current domain channel list */
 	rlmDomainGetChnlList(prGlueInfo->prAdapter,
-			     BAND_NULL,
+			     BAND_NULL, FALSE,
 			     ARRAY_SIZE(mtk_2ghz_channels) + ARRAY_SIZE(mtk_5ghz_channels),
 			     &ucNumOfChannel, aucChannelList);
 
