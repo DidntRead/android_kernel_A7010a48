@@ -77,8 +77,6 @@ static VOID bt_cdev_rst_cb(ENUM_WMTDRV_TYPE_T src,
 			   ENUM_WMTDRV_TYPE_T dst, ENUM_WMTMSG_TYPE_T type, PVOID buf, UINT32 sz)
 {
 	/*
-	   Handle whole chip reset messages
-	 */
 	ENUM_WMTRSTMSG_TYPE_T rst_msg;
 
 	if (sz <= sizeof(ENUM_WMTRSTMSG_TYPE_T)) {
@@ -99,9 +97,9 @@ static VOID bt_cdev_rst_cb(ENUM_WMTDRV_TYPE_T src,
 			}
 		}
 	} else {
-		/* Invalid message format */
 		BT_WARN_FUNC("Invalid message format!\n");
 	}
+	*/
 }
 
 VOID BT_event_cb(VOID)
