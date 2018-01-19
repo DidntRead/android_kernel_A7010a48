@@ -372,11 +372,12 @@ static struct LCM_setting_table lcm_backlight_level_setting[] = {
 /*
  *lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
  */
-
+#ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
 static struct LCM_setting_table lcm_cabc_level_setting[] = {
 	{0x55, 1, {0x00}},
 	{REGFLAG_END_OF_TABLE, 0x00, {}}
 };
+#endif
 #if 0
 static struct LCM_setting_table lcm_inverse_off_setting[] = {
 	{0x20, 1, {0x00}},
