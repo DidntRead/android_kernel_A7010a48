@@ -143,6 +143,7 @@ typedef enum _ENUM_CMD_ID_T {
 
 	CMD_ID_GET_LTE_CHN = 0x87,	/* 0x87 (Query) */
 	CMD_ID_GET_CHN_LOADING = 0x88,	/* 0x88 (Query) */
+	CMD_ID_WFC_KEEP_ALIVE = 0xA0,	/* 0xa0(Set) */
 
 	CMD_ID_ACCESS_REG = 0xc0,	/* 0xc0 (Set / Query) */
 	CMD_ID_MAC_MCAST_ADDR,	/* 0xc1 (Set / Query) */

@@ -104,6 +104,11 @@ typedef enum {
 } LSTATS_SUB_COMMAND;
 
 typedef enum {
+	WIFI_OFFLOAD_START_MKEEP_ALIVE = ANDROID_NL80211_SUBCMD_WIFI_OFFLOAD_RANGE_START,
+	WIFI_OFFLOAD_STOP_MKEEP_ALIVE,
+} WIFI_OFFLOAD_SUB_COMMAND;
+
+typedef enum {
 	GSCAN_EVENT_SIGNIFICANT_CHANGE_RESULTS,
 	GSCAN_EVENT_HOTLIST_RESULTS_FOUND,
 	GSCAN_EVENT_SCAN_RESULTS_AVAILABLE,
@@ -179,6 +184,16 @@ typedef enum {
 typedef enum {
 	LSTATS_ATTRIBUTE_STATS = 2,
 } LSTATS_ATTRIBUTE;
+
+typedef enum {
+	MKEEP_ALIVE_ATTRIBUTE_ID = 1,
+	MKEEP_ALIVE_ATTRIBUTE_IP_PKT_LEN,
+	MKEEP_ALIVE_ATTRIBUTE_IP_PKT,
+	MKEEP_ALIVE_ATTRIBUTE_SRC_MAC_ADDR,
+	MKEEP_ALIVE_ATTRIBUTE_DST_MAC_ADDR,
+	MKEEP_ALIVE_ATTRIBUTE_PERIOD_MSEC
+} WIFI_MKEEP_ALIVE_ATTRIBUTE;
+
 
 typedef enum {
 	WIFI_BAND_UNSPECIFIED,
@@ -548,6 +563,16 @@ typedef struct {
 	WIFI_PEER_INFO peer_info[];
 } WIFI_IFACE_STAT;
 
+/* Packet Keep Alive */
+typedef struct _PARAM_PACKET_KEEPALIVE_T {
+	BOOLEAN enable;	/* 1=Start, 0=Stop*/
+	UINT_8 index;
+	UINT_16 u2IpPktLen;
+	UINT_8 pIpPkt[256];
+	mac_addr ucSrcMacAddr;
+	mac_addr ucDstMacAddr;
+	UINT_32 u4PeriodMsec;
+} PARAM_PACKET_KEEPALIVE_T, *P_PARAM_PACKET_KEEPALIVE_T;
 
 typedef enum _ENUM_NLA_PUT_DATE_TYPE {
 	NLA_PUT_DATE_U8 = 0,
@@ -602,6 +627,12 @@ int mtk_cfg80211_vendor_get_scan_results(struct wiphy *wiphy, struct wireless_de
 
 int mtk_cfg80211_vendor_llstats_get_info(struct wiphy *wiphy, struct wireless_dev *wdev,
 					 const void *data, int data_len);
+
+int mtk_cfg80211_vendor_packet_keep_alive_start(struct wiphy *wiphy, struct wireless_dev *wdev,
+						const void *data, int data_len);
+
+int mtk_cfg80211_vendor_packet_keep_alive_stop(struct wiphy *wiphy, struct wireless_dev *wdev,
+					       const void *data, int data_len);
 
 int mtk_cfg80211_vendor_event_complete_scan(struct wiphy *wiphy, struct wireless_dev *wdev, WIFI_SCAN_EVENT complete);
 
