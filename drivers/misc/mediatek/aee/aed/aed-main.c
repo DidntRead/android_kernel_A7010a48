@@ -1803,7 +1803,7 @@ static void kernel_reportAPI(const AE_DEFECT_ATTR attr, const int db_opt, const 
 	}
 }
 
-#ifndef PARTIAL_BUILD
+#if 0
 void aee_kernel_dal_api(const char *file, const int line, const char *msg)
 {
 	LOGW("aee_kernel_dal_api : <%s:%d> %s ", file, line, msg);
@@ -1851,7 +1851,7 @@ void aee_kernel_dal_api(const char *file, const int line, const char *msg)
 #else
 void aee_kernel_dal_api(const char *file, const int line, const char *msg)
 {
-	LOGW("aee_kernel_dal_api : <%s:%d> %s ", file, line, msg);
+	LOGW("aee_kernel_dal_api has been phased out! caller info: <%s:%d> %s ", file, line, msg);
 }
 #endif
 EXPORT_SYMBOL(aee_kernel_dal_api);
