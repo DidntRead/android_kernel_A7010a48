@@ -1680,12 +1680,9 @@ static int mtkfb_pan_display_proxy(struct fb_var_screeninfo *var, struct fb_info
 	return mtkfb_pan_display_impl(var, info);
 }
 
-#if defined(CONFIG_PM_AUTOSLEEP)
 static void mtkfb_blank_suspend(void);
 static void mtkfb_blank_resume(void);
-#endif
 
-#if defined(CONFIG_PM_AUTOSLEEP)
 static int mtkfb_blank(int blank_mode, struct fb_info *info)
 {
 	switch (blank_mode) {
@@ -1709,7 +1706,6 @@ static int mtkfb_blank(int blank_mode, struct fb_info *info)
 
 	return 0;
 }
-#endif
 
 /* Callback table for the frame buffer framework. Some of these pointers
  * will be changed according to the current setting of fb_info->accel_flags.
@@ -2931,7 +2927,6 @@ void mtkfb_clear_lcm(void)
 #endif
 }
 
-#if defined(CONFIG_PM_AUTOSLEEP)
 static void mtkfb_blank_suspend(void)
 {
 	int ret = 0;
@@ -2958,7 +2953,6 @@ static void mtkfb_blank_suspend(void)
 	}
 	pr_debug("[FB Driver] leave early_suspend\n");
 }
-#endif
 
 /* PM resume */
 static int mtkfb_resume(struct device *pdev)
@@ -2970,7 +2964,6 @@ static int mtkfb_resume(struct device *pdev)
 	return 0;
 }
 
-#if defined(CONFIG_PM_AUTOSLEEP)
 static void mtkfb_blank_resume(void)
 {
 	int ret = 0;
@@ -3003,7 +2996,6 @@ static void mtkfb_blank_resume(void)
 //lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE beginend
     MSG_FUNC_LEAVE();
 }
-#endif
 
 /*---------------------------------------------------------------------------*/
 #ifdef CONFIG_PM
