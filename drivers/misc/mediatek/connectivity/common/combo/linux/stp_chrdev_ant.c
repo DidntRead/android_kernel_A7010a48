@@ -596,6 +596,11 @@ static int ANT_open(struct inode *inode, struct file *file)
 	sema_init(&wr_mtx, 1);
 /* init_MUTEX(&rd_mtx); */
 	sema_init(&rd_mtx, 1);
+	if (mtk_wcn_wmt_ic_info_get(WMTCHIN_HWVER) == 0x8A00) {
+		ANT_Power(1);
+	} else {
+		ANT_Power(2);
+	}
 	ANT_INFO_FUNC("finish\n");
 
 	return 0;
