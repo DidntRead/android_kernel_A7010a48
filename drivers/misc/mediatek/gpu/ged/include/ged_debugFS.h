@@ -1,16 +1,3 @@
-/*
- * Copyright (C) 2015 MediaTek Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- */
-
 #ifndef __GED_DEBUG_FS_H__
 #define __GED_DEBUG_FS_H__
 
@@ -26,7 +13,7 @@ typedef ssize_t (GED_ENTRY_WRITE_FUNC)(
 GED_ERROR ged_debugFS_create_entry(
     const char*             pszName,
 	void*                   pvDir,
-	const struct seq_operations *psReadOps,
+	struct seq_operations*  psReadOps,
     GED_ENTRY_WRITE_FUNC*   pfnWrite,
 	void*                   pvData,
 	struct dentry**         ppsEntry);

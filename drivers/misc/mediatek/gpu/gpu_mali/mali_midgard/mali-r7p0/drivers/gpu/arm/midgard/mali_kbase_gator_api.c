@@ -95,7 +95,7 @@ const char * const *kbase_gator_hwcnt_init_names(uint32_t *total_counters)
 	default:
 		hardware_counters = NULL;
 		*total_counters = 0;
-		dev_MTK_err(kbdev->dev, "Unrecognized gpu ID: %u\n", gpu_id);
+		dev_err(kbdev->dev, "Unrecognized gpu ID: %u\n", gpu_id);
 		break;
 	}
 
