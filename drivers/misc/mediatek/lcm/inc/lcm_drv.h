@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef __LCM_DRV_H__
 #define __LCM_DRV_H__
 
@@ -339,6 +352,36 @@ typedef struct {
 /* --------------------------------------------------------------------------- */
 
 typedef struct {
+	unsigned int slice_width;
+	unsigned int slice_hight;
+	unsigned int bit_per_pixel;
+	unsigned int slice_mode;
+	unsigned int rgb_swap;
+	unsigned int dsc_cfg;
+	unsigned int dsc_line_buf_depth;
+	unsigned int bit_per_channel;
+	unsigned int rct_on;
+	unsigned int bp_enable;
+
+	unsigned int dec_delay;
+	unsigned int xmit_delay;
+	unsigned int scale_value;
+
+	unsigned int increment_interval;
+	unsigned int line_bpg_offset;
+	unsigned int decrement_interval;
+	unsigned int nfl_bpg_offset;
+	unsigned int slice_bpg_offset;
+	unsigned int initial_offset;
+	unsigned int final_offset;
+
+	unsigned int flatness_minqp;
+	unsigned int flatness_maxqp;
+	unsigned int rc_mode1_size;
+} LCM_DSC_CONFIG_PARAMS;
+
+
+typedef struct {
 	/* common parameters for serial & parallel interface */
 	unsigned int port;
 	LCM_DBI_CLOCK_FREQ clock_freq;
@@ -411,6 +454,9 @@ typedef struct {
 	/* intermediate buffers parameters */
 	unsigned int intermediat_buffer_num;	/* 2..3 */
 
+	unsigned int dsc_enable;
+	LCM_DSC_CONFIG_PARAMS dsc_params;
+
 	/* iopad parameters */
 	LCM_DRIVING_CURRENT io_driving_current;
 	LCM_DRIVING_CURRENT msb_io_driving_current;
@@ -420,21 +466,12 @@ typedef struct {
 
 
 /* --------------------------------------------------------------------------- */
-//lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
-#ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
-typedef struct
-{
-    /* common parameters */
-    unsigned char cmd;
-    unsigned char data;
-
-}lcm_reg;
-#endif
-//lenovo wuwl10 20150604 add CUSTOM_LCM_FEATUREend
+#define RT_MAX_NUM 10
+#define ESD_CHECK_NUM 3
 typedef struct {
 	unsigned char cmd;
 	unsigned char count;
-	unsigned char para_list[2];
+	unsigned char para_list[RT_MAX_NUM];
 } LCM_esd_check_item;
 typedef enum {
 	DUAL_DSI_NONE = 0x0,
@@ -457,35 +494,6 @@ typedef enum {
 	MIPITX_PHY_PORT_1,
 	MIPITX_PHY_PORT_NUM
 } MIPITX_PHY_PORT;
-
-typedef struct {
-	unsigned int slice_width;
-	unsigned int slice_hight;
-	unsigned int bit_per_pixel;
-	unsigned int slice_mode;
-	unsigned int rgb_swap;
-	unsigned int dsc_cfg;
-	unsigned int dsc_line_buf_depth;
-	unsigned int bit_per_channel;
-	unsigned int rct_on;
-	unsigned int bp_enable;
-
-	unsigned int dec_delay;
-	unsigned int xmit_delay;
-	unsigned int scale_value;
-
-	unsigned int increment_interval;
-	unsigned int line_bpg_offset;
-	unsigned int decrement_interval;
-	unsigned int nfl_bpg_offset;
-	unsigned int slice_bpg_offset;
-	unsigned int initial_offset;
-	unsigned int final_offset;
-
-	unsigned int flatness_minqp;
-	unsigned int flatness_maxqp;
-	unsigned int rc_mode1_size;
-} LCM_DSC_CONFIG_PARAMS;
 
 
 typedef struct {
@@ -563,6 +571,8 @@ typedef struct {
 	unsigned int rg_bic;
 	unsigned int rg_bp;
 	unsigned int PLL_CLOCK;
+	unsigned int PLL_CK_VDO;
+	unsigned int PLL_CK_CMD;
 	unsigned int dsi_clock;
 	unsigned int ssc_disable;
 	unsigned int ssc_range;
@@ -584,7 +594,7 @@ typedef struct {
 	unsigned int noncont_clock;
 	unsigned int noncont_clock_period;
 	unsigned int clk_lp_per_line_enable;
-	LCM_esd_check_item lcm_esd_check_table[3];
+	LCM_esd_check_item lcm_esd_check_table[ESD_CHECK_NUM];
 	unsigned int switch_mode_enable;
 	DUAL_DSI_TYPE dual_dsi_type;
 	unsigned int lane_swap_en;
@@ -622,20 +632,40 @@ typedef struct {
 	unsigned int height;
 	unsigned int virtual_width;
 	unsigned int virtual_height;
+	unsigned int density;
 	unsigned int io_select_mode;	/* DBI or DPI should select IO mode according to chip spec */
 
 	/* particular parameters */
 	LCM_DBI_PARAMS dbi;
 	LCM_DPI_PARAMS dpi;
 	LCM_DSI_PARAMS dsi;
-	unsigned int physical_width;
-	unsigned int physical_height;
+	unsigned int physical_width;	/* length: mm, for legacy use */
+	unsigned int physical_height;	/* length: mm, for legacy use */
+	unsigned int physical_width_um;	/* length: um, for more precise precision */
+	unsigned int physical_height_um;	/* length: um, for more precise precision */
 	unsigned int od_table_size;
 	void *od_table;
 } LCM_PARAMS;
 
 
 #if defined(MTK_LCM_DEVICE_TREE_SUPPORT)
+#ifndef MAX
+#define MAX(x, y)   (((x) >= (y)) ? (x) : (y))
+#endif				/* MAX */
+
+#ifndef MIN
+#define MIN(x, y)   (((x) <= (y)) ? (x) : (y))
+#endif				/* MIN */
+
+#define INIT_SIZE			(512)
+#define COMPARE_ID_SIZE	(32)
+#define SUSPEND_SIZE		(32)
+#define BACKLIGHT_SIZE		(32)
+#define BACKLIGHT_CMDQ_SIZE		(32)
+#define MAX_SIZE			(MAX(MAX(MAX(MAX(INIT_SIZE, COMPARE_ID_SIZE), SUSPEND_SIZE), BACKLIGHT_SIZE), \
+							BACKLIGHT_CMDQ_SIZE))
+
+
 typedef struct {
 	char data;
 	char padding[131];
@@ -695,12 +725,14 @@ typedef struct {
 	unsigned int compare_id_size;
 	unsigned int suspend_size;
 	unsigned int backlight_size;
+	unsigned int backlight_cmdq_size;
 
 	LCM_PARAMS params;
-	LCM_DATA init[256];
-	LCM_DATA compare_id[32];
-	LCM_DATA suspend[32];
-	LCM_DATA backlight[32];
+	LCM_DATA init[INIT_SIZE];
+	LCM_DATA compare_id[COMPARE_ID_SIZE];
+	LCM_DATA suspend[SUSPEND_SIZE];
+	LCM_DATA backlight[BACKLIGHT_SIZE];
+	LCM_DATA backlight_cmdq[BACKLIGHT_CMDQ_SIZE];
 } LCM_DTS;
 #endif
 
@@ -734,6 +766,10 @@ typedef struct {
 				 unsigned char force_update);
 	void (*dsi_set_cmdq_V2)(unsigned cmd, unsigned char count, unsigned char *para_list,
 				 unsigned char force_update);
+	void (*dsi_set_cmdq_V2_DCS)(unsigned cmd, unsigned char count, unsigned char *para_list,
+				 unsigned char force_update);
+	void (*dsi_set_cmdq_V2_generic)(unsigned cmd, unsigned char count, unsigned char *para_list,
+				 unsigned char force_update);
 	void (*dsi_set_cmdq)(unsigned int *pdata, unsigned int queue_size,
 			      unsigned char force_update);
 	void (*dsi_set_null)(unsigned cmd, unsigned char count, unsigned char *para_list,
@@ -753,9 +789,14 @@ typedef struct {
 	int (*set_gpio_dir)(unsigned int pin, unsigned int dir);
 	int (*set_gpio_pull_enable)(unsigned int pin, unsigned char pull_en);
 	long (*set_gpio_lcd_enp_bias)(unsigned int value);
+	long (*set_gpio_lcd_enp_bias_ByName)(bool bOn, char *pinName);
 	void (*dsi_set_cmdq_V11)(void *cmdq, unsigned int *pdata, unsigned int queue_size,
 				  unsigned char force_update);
 	void (*dsi_set_cmdq_V22)(void *cmdq, unsigned cmd, unsigned char count,
+				  unsigned char *para_list, unsigned char force_update);
+	void (*dsi_set_cmdq_V22_DCS)(void *cmdq, unsigned cmd, unsigned char count,
+				  unsigned char *para_list, unsigned char force_update);
+	void (*dsi_set_cmdq_V22_generic)(void *cmdq, unsigned cmd, unsigned char count,
 				  unsigned char *para_list, unsigned char force_update);
 	void (*dsi_swap_port)(int swap);
 	void (*dsi_set_cmdq_V23)(void *cmdq, unsigned cmd, unsigned char count,
@@ -794,13 +835,11 @@ typedef struct {
 	/* ///////////////////////// */
 
 	int (*adjust_fps)(void *cmdq, int fps, LCM_PARAMS *params);
+	void (*validate_roi)(int *x, int *y, int *width, int *height);
 
 	/* ///////////ESD_RECOVERY////////////////////// */
 	unsigned int (*esd_check)(void);
 	unsigned int (*esd_recover)(void);
-//lenovo-sw wuwl10 add 20150515 for esd recover panel backlight begin
-    void (*esd_recover_backlight)(void);
-//lenovo-sw wuwl10 add 20150515 for esd recover panel backlight end
 	unsigned int (*check_status)(void);
 	unsigned int (*ata_check)(unsigned char *buffer);
 	void (*read_fb)(unsigned char *buffer);
@@ -818,25 +857,15 @@ typedef struct {
 			     unsigned int *lcm_value);
 	/* /////////////PWM///////////////////////////// */
 	void (*set_pwm_for_mix)(int enable);
-//lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
-#ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
-    void (*set_cabcmode)(unsigned int mode);
-    void (*get_cabcmode)(unsigned int * mode);
-    void (*set_inversemode)(unsigned int mode);
-    void (*get_inversemode)(unsigned int * mode);
-
-    void (*set_lcm_reg)(lcm_reg *regs);
-    void (*get_lcm_reg)(lcm_reg *regs);
-    const char* version;
-    unsigned int  (*get_lcm_version)(void);
-    unsigned int (*detect_backlight)(void);
-#endif	
+        void (*set_cabcmode)(unsigned int mode);
 } LCM_DRIVER;
 
 #if	defined(CONFIG_ARCH_MT6735) ||\
 	defined(CONFIG_ARCH_MT6735M) ||\
 	defined(CONFIG_ARCH_MT6753) ||\
-	defined(CONFIG_ARCH_MT6580)
+	defined(CONFIG_ARCH_MT6570) ||\
+	defined(CONFIG_ARCH_MT6580) ||\
+	defined(CONFIG_ARCH_MT8167)
 extern LCM_DRIVER *lcm_driver_list[];
 extern unsigned int lcm_count;
 #endif
@@ -848,5 +877,6 @@ const LCM_DRIVER *LCM_GetDriver(void);
 unsigned char which_lcd_module_triple(void);
 int lcm_vgp_supply_enable(void);
 int lcm_vgp_supply_disable(void);
+extern LCM_DSI_MODE_CON lcm_dsi_mode;
 
 #endif /* __LCM_DRV_H__ */

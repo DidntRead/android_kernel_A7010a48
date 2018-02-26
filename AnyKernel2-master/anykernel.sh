@@ -26,10 +26,6 @@ ramdisk_compression=auto;
 # import patching functions/variables - see for reference
 . /tmp/anykernel/tools/ak2-core.sh;
 
-
-chmod 640 $ramdisk/fstab.mt6735
-
-
 ## AnyKernel install
 dump_boot;
 

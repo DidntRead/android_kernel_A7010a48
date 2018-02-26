@@ -1,11 +1,24 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef _DDP_RDMA_H_
 #define _DDP_RDMA_H_
 
 #include <mt-plat/sync_write.h>
 #include <linux/types.h>
 /* #include <mach/mt_reg_base.h> */
-#include "../../mt6735/dispsys/ddp_info.h"
-#include "../../mt6735/dispsys/ddp_hal.h"
+#include "../../mt6735/ddp_info.h"
+#include "../../mt6735/ddp_hal.h"
 
 extern unsigned long long rdma_start_time[];
 extern unsigned long long rdma_end_time[];

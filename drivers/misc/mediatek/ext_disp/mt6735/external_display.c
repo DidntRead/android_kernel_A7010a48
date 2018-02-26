@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #include <linux/delay.h>
 #include <linux/sched.h>
 #include <linux/semaphore.h>
@@ -632,7 +645,7 @@ static int _ext_disp_trigger(int blocking, void *callback, unsigned int userdata
 	bool reg_flush = false;
 	/*disp_session_vsync_config vsync_config;*/
 
-	EXT_DISP_FUNC();
+	/*EXT_DISP_FUNC();*/
 
 	if (_should_wait_path_idle())
 		dpmgr_wait_event_timeout(pgc->dpmgr_handle, DISP_PATH_EVENT_FRAME_DONE, HZ / 2);
@@ -971,7 +984,7 @@ int ext_disp_trigger(int blocking, void *callback, unsigned int userdata, unsign
 {
 	int ret = 0;
 
-	EXT_DISP_FUNC();
+	/*EXT_DISP_FUNC();*/
 	_ext_disp_path_lock();
 
 	if (pgc->state == EXTD_DEINIT || pgc->state == EXTD_SUSPEND || pgc->need_trigger_overlay < 1) {
@@ -992,7 +1005,7 @@ int ext_disp_trigger(int blocking, void *callback, unsigned int userdata, unsign
 
 	pgc->state = EXTD_RESUME;
 	_ext_disp_path_unlock();
-	EXT_DISP_LOG("ext_disp_trigger done\n");
+	/*EXT_DISP_LOG("ext_disp_trigger done\n");*/
 
 	return ret;
 }
@@ -1216,7 +1229,7 @@ int ext_disp_switch_cmdq(CMDQ_SWITCH use_cmdq)
 	return ext_disp_use_cmdq;
 }
 
-int ext_disp_get_curr_addr(unsigned long *input_curr_addr, int module)
+void ext_disp_get_curr_addr(unsigned long *input_curr_addr, int module)
 {
 	if (module == 1)
 		ovl_get_address(DISP_MODULE_OVL1, input_curr_addr);
@@ -1225,13 +1238,13 @@ int ext_disp_get_curr_addr(unsigned long *input_curr_addr, int module)
 
 		if (pgc->dpmgr_handle == NULL) {
 			_ext_disp_path_unlock();
-			return -1;
+			return;
 		}
 		dpmgr_get_input_address(pgc->dpmgr_handle, input_curr_addr);
 
 		_ext_disp_path_unlock();
 	}
-	return 0;
+	return;
 }
 
 int ext_disp_factory_test(int mode, void *config)

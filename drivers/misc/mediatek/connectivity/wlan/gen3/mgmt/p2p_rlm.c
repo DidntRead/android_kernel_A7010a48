@@ -1,4 +1,18 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id: @(#) p2p_rlm.c@@
 */
 
@@ -691,7 +705,7 @@ rlmFuncCommonChannelList(IN P_ADAPTER_T prAdapter,
 	P_P2P_CONNECTION_SETTINGS_T prP2pConnSetting = (P_P2P_CONNECTION_SETTINGS_T) NULL;
 	P_CHANNEL_ENTRY_FIELD_T prChannelEntryI =
 	    (P_CHANNEL_ENTRY_FIELD_T) NULL, prChannelEntryIII = (P_CHANNEL_ENTRY_FIELD_T) NULL;
-	UINT_8 aucCommonChannelList[P2P_MAX_SUPPORTED_CHANNEL_LIST_SIZE];
+	UINT_8 aucCommonChannelList[P2P_MAX_SUPPORTED_CHANNEL_LIST_SIZE] = {0};
 	UINT_8 ucOriChnlSize = 0, ucNewChnlSize = 0;
 
 	do {

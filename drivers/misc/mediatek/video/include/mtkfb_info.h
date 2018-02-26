@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef __MTKFB_INFO_H__
 #define __MTKFB_INFO_H__
 
@@ -17,7 +30,8 @@ extern "C" {
 		HDMI = 7,
 		HDMI_SMARTBOOK,
 		MHL,
-		DISPIF_TYPE_EPD
+		DISPIF_TYPE_EPD,
+		SLIMPORT
 	} MTKFB_DISPIF_TYPE;
 
 	typedef enum {
@@ -38,25 +52,7 @@ extern "C" {
 		DISPIF_MODE_VIDEO = 0,
 		DISPIF_MODE_COMMAND
 	} MTKFB_DISPIF_MODE;
-//lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
-#if 1//def CONFIG_LENOVO_CUSTOM_LCM_FEATURE
-typedef struct lenovo_disp_feature_info {
-	int display_id;
-	int cabc_support;
-	int inverse_support;
-	int gamma_support;
-	int ie_support;
-} lenovo_disp_feature_info_t;
 
-typedef struct lenovo_disp_feature_state {
-	int display_id;
-	int cabc_mode;
-	int inverse_mode;
-	int gamma_mode;
-	int ie_mode;
-} lenovo_disp_feature_state_t;
-#endif
-//lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE end
 	typedef struct mtk_dispif_info {
 		unsigned int display_id;
 		unsigned int isHwVsyncAvailable;
@@ -91,6 +87,9 @@ typedef struct lenovo_disp_feature_state {
 		MTK_FB_FORMAT_UYVY = MAKE_MTK_FB_FORMAT_ID(9, 2),
 		MTK_FB_FORMAT_YUV420_P = MAKE_MTK_FB_FORMAT_ID(10, 2),
 		MTK_FB_FORMAT_YUY2 = MAKE_MTK_FB_FORMAT_ID(11, 2),
+		MTK_FB_FORMAT_RGBA8888 = MAKE_MTK_FB_FORMAT_ID(12, 4),
+		MTK_FB_FORMAT_BGRA8888 = MAKE_MTK_FB_FORMAT_ID(13, 4),
+		MTK_FB_FORMAT_RGBX8888 = MAKE_MTK_FB_FORMAT_ID(14, 4),
 		MTK_FB_FORMAT_BPP_MASK = 0xFF,
 	} MTK_FB_FORMAT;
 

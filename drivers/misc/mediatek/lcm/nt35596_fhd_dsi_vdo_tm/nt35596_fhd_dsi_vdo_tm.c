@@ -46,7 +46,7 @@
 /*
  *Lenovo-sw wuwl10 add 20150515 for esd recover backlight
  */
-#ifndef BUILD_LK
+#if 0
 static unsigned int esd_last_backlight_level = 255;
 #endif
 /*
@@ -369,28 +369,10 @@ static struct LCM_setting_table lcm_backlight_level_setting[] = {
 	{0x51, 1, {0xFF}},
 	{REGFLAG_END_OF_TABLE, 0x00, {}}
 };
-/*
- *lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
- */
-#ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
 static struct LCM_setting_table lcm_cabc_level_setting[] = {
 	{0x55, 1, {0x00}},
 	{REGFLAG_END_OF_TABLE, 0x00, {}}
 };
-#endif
-#if 0
-static struct LCM_setting_table lcm_inverse_off_setting[] = {
-	{0x20, 1, {0x00}},
-	{REGFLAG_END_OF_TABLE, 0x00, {}}
-};
-static struct LCM_setting_table lcm_inverse_on_setting[] = {
-	{0x21, 1, {0x00}},
-	{REGFLAG_END_OF_TABLE, 0x00, {}}
-};
-#endif
-/*
- *lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
- */
 static void push_table(struct LCM_setting_table *table, unsigned int count, unsigned char force_update)
 {
 	unsigned int i;
@@ -479,7 +461,7 @@ static void lcm_setbacklight(unsigned int level)
 /*
  *Lenovo-sw wuwl10 add 20150515 for esd recover backlight
  */
-	esd_last_backlight_level = level;
+	//esd_last_backlight_level = level;
 #endif
 	/*
 	 * Refresh value of backlight level.
@@ -492,7 +474,7 @@ static void lcm_setbacklight(unsigned int level)
 /*
  *lenovo-sw wuwl10 20150515 add for esd revovery backlight begin
  */
-#if 1
+#if 0
 static void lcm_esd_recover_backlight(void)
 {
 
@@ -530,8 +512,11 @@ static void lcm_get_params(LCM_PARAMS *params)
 
 	params->width = FRAME_WIDTH;
 	params->height = FRAME_HEIGHT;
+	params->density = 480;
 	params->physical_height = 121;
 	params->physical_width = 68;
+	params->physical_width_um = 68000;
+	params->physical_height_um = 121000;
 #if (LCM_DSI_CMD_MODE)
 	params->dsi.mode = CMD_MODE;
 #else
@@ -574,7 +559,7 @@ static void lcm_get_params(LCM_PARAMS *params)
 	/*
 	 *params->dsi.clk_lp_per_line_enable= 1;
 	 */
-	params->dsi.esd_check_enable = 1;
+	params->dsi.esd_check_enable = 0;
 	params->dsi.customization_esd_check_enable = 0;
 /*
  *	params->dsi.ssc_disable = 1;
@@ -789,6 +774,12 @@ static void lcm_resume(void)
 	lcm_init();
 }
 
+static void lcm_set_cabcmode(unsigned int mode)
+{
+	lcm_cabc_level_setting[0].para_list[0] = mode;
+	push_table(lcm_cabc_level_setting, sizeof(lcm_cabc_level_setting) / sizeof(struct LCM_setting_table), 1);
+}
+
 #if (LCM_DSI_CMD_MODE)
 static void lcm_update(unsigned int x, unsigned int y,
 		       unsigned int width, unsigned int height)
@@ -849,26 +840,6 @@ static unsigned int lcm_compare_id(void)
  *lenovo-sw wuwl10 modify 20150514 for new lcm timming end
  */
 
-/*
- *lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE begin
- */
-#ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
-static void lcm_set_cabcmode(unsigned int mode)
-{
-#ifdef BUILD_LK
-	dprintf(0, "%s, mode = %d\n", __func__, mode);
-#else
-	printk("%s, mode = %d\n", __func__, mode);
-#endif
-
-	lcm_cabc_level_setting[0].para_list[0] = mode;
-	push_table(lcm_cabc_level_setting, sizeof(lcm_cabc_level_setting) / sizeof(struct LCM_setting_table), 1);
-}
-#endif
-/*
- *lenovo wuwl10 20150604 add CUSTOM_LCM_FEATURE end
- */
-
 LCM_DRIVER nt35596_fhd_dsi_vdo_tm_lcm_drv = {
 	.name = "nt35596_fhd_dsi_vdo_tm",
 	.set_util_funcs = lcm_set_util_funcs,
@@ -877,21 +848,8 @@ LCM_DRIVER nt35596_fhd_dsi_vdo_tm_lcm_drv = {
 	.suspend = lcm_suspend,
 	.resume = lcm_resume,
 	.compare_id = lcm_compare_id,
-	/*
-	 *.init_power		= lcm_init_power,
- *Lenovo-sw wuwl10 add 20150515 for esd recover backlight
-	 */
-#ifndef BUILD_LK
-	.esd_recover_backlight = lcm_esd_recover_backlight,
-#endif
-	/*
-	 *.resume_power = lcm_resume_power,
-	 *.suspend_power = lcm_suspend_power,
-	 */
-	.set_backlight	= lcm_setbacklight,
-#ifdef CONFIG_LENOVO_CUSTOM_LCM_FEATURE
 	.set_cabcmode = lcm_set_cabcmode,
-#endif
+	.set_backlight	= lcm_setbacklight,
 #if (LCM_DSI_CMD_MODE)
 	.update = lcm_update,
 #endif

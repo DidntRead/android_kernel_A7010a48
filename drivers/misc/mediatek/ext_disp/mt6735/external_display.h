@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef _EXTD_DDP_H_
 #define _EXTD_DDP_H_
 
@@ -102,7 +115,7 @@ int ext_disp_is_video_mode(void);
 CMDQ_SWITCH ext_disp_cmdq_enabled(void);
 int ext_disp_switch_cmdq(CMDQ_SWITCH use_cmdq);
 int ext_disp_diagnose(void);
-int ext_disp_get_curr_addr(unsigned long *input_curr_addr, int module);
+void ext_disp_get_curr_addr(unsigned long *input_curr_addr, int module);
 int ext_disp_factory_test(int mode, void *config);
 int ext_disp_get_handle(disp_path_handle *dp_handle, cmdqRecHandle *pHandle);
 int ext_disp_set_ovl1_status(int status);

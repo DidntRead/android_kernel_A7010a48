@@ -16,6 +16,7 @@
 /*******************************************************************************
 * Dependency
 *******************************************************************************/
+#ifdef CONFIG_MTK_GPS_SUPPORT
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
@@ -46,6 +47,9 @@
 /******************************************************************************
  * Function Configuration
 ******************************************************************************/
+/* #define FAKE_DATA */
+#define GPS_SUSPEND_RESUME
+#define GPS_CONFIGURABLE_RESET_DELAY
 /******************************************************************************
  * Definition
 ******************************************************************************/
@@ -364,6 +368,7 @@ static inline int mt3326_gps_set_pwrsave(struct gps_drv_obj *obj, unsigned char 
 /******************************************************************************/
 static inline int mt3326_gps_dev_suspend(struct gps_drv_obj *obj)
 {
+#if defined(GPS_SUSPEND_RESUME)
 	int err;
 
 	err = mt3326_gps_set_suspend(obj, GPS_PWR_SUSPEND);
@@ -373,11 +378,13 @@ static inline int mt3326_gps_dev_suspend(struct gps_drv_obj *obj)
 	if (err)
 		GPS_DBG("set pwrctl fail: %d\n", err);
 	return err;
+#endif
 }
 
 /******************************************************************************/
 static inline int mt3326_gps_dev_resume(struct gps_drv_obj *obj)
 {
+#if defined(GPS_SUSPEND_RESUME)
 	int err;
 
 	err = mt3326_gps_set_suspend(obj, GPS_PWR_RESUME);
@@ -385,6 +392,7 @@ static inline int mt3326_gps_dev_resume(struct gps_drv_obj *obj)
 		GPS_DBG("set suspend fail: %d\n", err);
 	/*don't power on device automatically */
 	return err;
+#endif
 }
 
 /******************************************************************************/
@@ -641,6 +649,8 @@ static ssize_t mt3326_store_pwrsave(struct device *dev, struct device_attribute 
 }
 
 /******************************************************************************/
+#if defined(GPS_CONFIGURABLE_RESET_DELAY)
+/******************************************************************************/
 static ssize_t mt3326_show_rdelay(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	ssize_t res;
@@ -689,20 +699,25 @@ static ssize_t mt3326_store_rdelay(struct device *dev, struct device_attribute *
 }
 
 /******************************************************************************/
+#endif
+/******************************************************************************/
 DEVICE_ATTR(pwrctl, S_IWUSR | S_IWGRP | S_IRUGO, mt3326_show_pwrctl, mt3326_store_pwrctl);
 DEVICE_ATTR(suspend, S_IWUSR | S_IWGRP | S_IRUGO, mt3326_show_suspend, mt3326_store_suspend);
 DEVICE_ATTR(status, S_IWUSR | S_IWGRP | S_IRUGO, mt3326_show_status, mt3326_store_status);
 DEVICE_ATTR(state, S_IWUSR | S_IWGRP | S_IRUGO, mt3326_show_state, mt3326_store_state);
 DEVICE_ATTR(pwrsave, S_IWUSR | S_IWGRP | S_IRUGO, mt3326_show_pwrsave, mt3326_store_pwrsave);
+#if defined(GPS_CONFIGURABLE_RESET_DELAY)
 DEVICE_ATTR(rdelay, S_IWUSR | S_IWGRP | S_IRUGO, mt3326_show_rdelay, mt3326_store_rdelay);
-
+#endif
 static struct device_attribute *gps_attr_list[] = {
 	&dev_attr_pwrctl,
 	&dev_attr_suspend,
 	&dev_attr_status,
 	&dev_attr_state,
 	&dev_attr_pwrsave,
+#if defined(GPS_CONFIGURABLE_RESET_DELAY)
 	&dev_attr_rdelay,
+#endif
 };
 
 /******************************************************************************/
@@ -1083,7 +1098,7 @@ static int mt3326_gps_resume(struct platform_device *dev)
 /*****************************************************************************/
 #ifdef CONFIG_OF
 static const struct of_device_id apgps_of_ids[] = {
-	{.compatible = "mediatek,mt3326-gps",},
+	{.compatible = "mediatek,gps",},
 	{}
 };
 #endif
@@ -1111,6 +1126,7 @@ static int __init mt3326_gps_mod_init(void)
 
 	GPS_TRC();
 
+	/* ret = driver_register(&mt3326_gps_driver); */
 	ret = platform_driver_register(&mt3326_gps_driver);
 
 	return ret;
@@ -1130,3 +1146,4 @@ module_exit(mt3326_gps_mod_exit);
 MODULE_AUTHOR("MingHsien Hsieh <MingHsien.Hsieh@mediatek.com>");
 MODULE_DESCRIPTION("MT3326 GPS Driver");
 MODULE_LICENSE("GPL");
+#endif
