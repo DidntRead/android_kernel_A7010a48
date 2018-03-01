@@ -50,10 +50,12 @@ int fence_create(struct sw_sync_timeline *obj, struct fence_data *data)
 	struct sync_fence *fence;
 
 	if (fd < 0)
+		printk("mtk_sync failed to get unused fd!");
 		return fd;
 
 	pt = sw_sync_pt_create(obj, data->value);
 	if (pt == NULL) {
+		printk("mtk_sync failed to create pt!");
 		err = -ENOMEM;
 		goto err;
 	}
@@ -62,6 +64,7 @@ int fence_create(struct sw_sync_timeline *obj, struct fence_data *data)
 	fence = sync_fence_create(data->name, pt);
 	if (fence == NULL) {
 		sync_pt_free(pt);
+		printk("mtk_sync failed to create fence!");
 		err = -ENOMEM;
 		goto err;
 	}
